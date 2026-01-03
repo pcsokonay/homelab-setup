@@ -29,11 +29,10 @@
 - **Plan:**
   - Install via Docker on Beelink.
   - Configure Nextcloud for csokonay.online domain.
-  - Review E:\Documents, E:\Downloads for Nextcloud integration.
+  - Review E:\Documents, for Nextcloud integration.
 - **Status:**
   - Complete (merged main stack, local volumes, MariaDB/Redis/opcache tuning, custom SMB image, internal Caddy proxy, external HTTPS/domain via nextcloud.csokonay.online stable, app/client sync working, TrueNAS MediaShare mounted as External Storage via SMB/media_user—snappy access achieved).
   - Achieved: Full performance/security polish, docs/files central integration.
-  - Next: Move to Dashboards (Homarr/Notifiarr) for centralized management/monitoring.
 
 ## Integrate Snapcast
 - **Purpose:**
