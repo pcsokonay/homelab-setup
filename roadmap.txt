@@ -1,4 +1,4 @@
-# Home Server Roadmap - Generated 01/JAN/2026 12:00 AEDT
+# Home Server Roadmap - Generated 03/JAN/2026 12:00 AEDT
 
 ## Notes
 - **Planned immediate next steps in order**:
@@ -169,3 +169,13 @@
   - Dynamic bandwidth scripting evaluation pending.
 - **Next:**
   - Dynamic bandwidth scripting eval for QoS, full live.
+
+## Docs Management
+- **Purpose:**
+  - Versioned, live-referenced homelab documentation for easy updates and AI access (frees up chat context; learning Git/VS Code).
+- **Plan:**
+  - Use GitHub repo[](https://github.com/pcsokonay/homelab-setup) for all .txt files.
+  - Edit locally in VS Code, stage/commit/push for instant raw URL updates (e.g., https://raw.githubusercontent.com/pcsokonay/homelab-setup/main/roadmap.txt).
+  - Optional: Add .gitignore for any future secrets/temp files.
+- **Status:**
+  - Complete (initial upload 03/JAN/2026; all split .txt files live; raw access tested and working).
