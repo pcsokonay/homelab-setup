@@ -1,0 +1,63 @@
+## Storage Setup
+- **NAS Setup**
+  - **TrueNAS Scale**:
+    - Version: Goldeneye-25.10.0 (upgraded from Fangtooth-25.04.2.5 via 25.04.2.6 on 14/NOV/2025; boot-pool compression set to lz4 local recursively to resolve GRUB/inherit errors)
+  - **S.M.A.R.T.**:
+    - Monitoring: Relying on built-in Goldeneye monitoring and alerts (polls attributes for warnings/criticals; no custom automated tests after cron job removal 09/DEC/2025 to reduce wear/false positives)
+    - History: Stuck tests cleared 25/OCT/2025
+  - **Email Alerts**:
+    - Configured: From shoddy88@yahoo.com.au to pcsokonay@gmail.com, S.M.A.R.T. Warning/Critical, Immediate; alerts received for faulty drives
+  - **Users**:
+    - media_user (Samba Authentication enabled, email pcsokonay@gmail.com, home directory /nonexistent, confirmed; UID 3000, GID 3000 via custom group)
+  - **SMB Share**:
+    - MediaShare (/mnt/media/media, mapped to Z: on Windows and /mnt/media on Beelink via nas-direct alias in /etc/hosts)
+      - Note: TrueNAS sees full paths like /mnt/media/media/Media/TV_Series and /mnt/media/media/Media/Movies due to pool/dataset structure, while Beelink SMB mount omits the extra /media/ for /mnt/media/Media/TV_Series etc.
+  - **Access**:
+    - Web UI: http://192.168.0.8 (1-hour session timeout)
+  - **Virtualization**:
+    - Supported: Enabled in BIOS Security > Virtualization for VT-x/VT-d, GUI now confirms available
+  - **Installed Apps and VMs**:
+    - Apps: Scrutiny, Bazarr, Tdarr Node
+    - VMs: Home Assistant
+  - **Hardware**:
+    - Chassis: Lenovo M700 SFF (i5-6600, virtualization supported after BIOS enable for VT-x/VT-d)
+    - HBA: Fujitsu D2607-A21 (firmware 20.00.07.00-IT, enabled)
+    - Expander: Adaptec AEC-82885T LENOVO 36port 12Gbps SAS Expander SAS/SAT RAID (installed externally in cardboard enclosure with cables; tested and all drives detected 01/NOV/2025; no built-in thermal sensors, monitor drives instead)
+    - Additional HBA: Fujitsu D2607-A21 8-Port 6G/s LSI 9211-8i SAS2008 IT mode with 2x SFF-8087 to 4x SAS breakout cables (firmware 20.00.07.00-IT, enabled)
+    - Power: External PSH750V-D 750W PSU for drives (green-to-black short successful, red socket +12V-only no +5V—design feature); cannot exceed 6 drives per rail due to OCP on spin-up; hotwired secondary PSU (24-pin ATX) for extra rail to support 16 drives; stable after 24 hours, but add another PSU before extra drives
+  - **ACLs**:
+    - Dataset media: media_user Full Control
+    - aclmode=passthrough on media/media for POSIX compatibility
+  - **Pool**:
+    - Name: media
+    - Configuration: 16x 3TB SAS drives in 2x RAIDZ2 vdevs (ONLINE, no errors; second vdev added 03/NOV/2025 after expander install; simultaneous short SMART tests on all drives passed; see SAS_HDD_inventory_list.txt for drive-specific information)
+  - **Dataset**:
+    - Name: media
+    - Compression: lz4
+    - Sub-datasets: tdarr-cache (created for Tdarr temp, compression lz4, permissions media_user Full Control)
+  - **Snapshots**:
+    - test-snapshot-hold (hold on, for MediaShare2 clone testing)
+  - **Drives**:
+    - 16x 3TB SAS drives (see SAS_HDD_inventory_list.txt for details; note: sdb Z298JJF1 with 1 uncorrectable error, monitor with long SMART test)
+  - **Boot Pool**:
+    - Device: ORICO 512GB mSATA SSD (/dev/sdq)
+    - State: ONLINE after clearing transient errors (likely from past PSU overcurrent tests); scrubbed with 0 repairs on 14/NOV/2025
+    - SMART: Passed, 1833 power-on hours, 0 reallocated/pending sectors, temp 40C
+    - Compression: Set to lz4 local recursively on all datasets on 14/NOV/2025 to fix GRUB inherit/checksum errors during updates
+- **CHOCKSMAINPC**
+  - **OS Storage**
+  - **Tdarr Temp**:
+    - Location: "Z:\tdarr-cache"
+- **Beelink**
+  - **OS Storage**
+  - **Caching Setup**
+    - **Caching SSD**:
+      - Model: 1TB Kingston SNV3S1000G M.2 NVMe in UGREEN ASMedia enclosure
+      - Device: /dev/sda
+      - Filesystem: ext4 label cache (no journaling)
+      - UUID: df0f4f60-5c5c-4b6b-8f42-b0e1bd32db5e
+      - Connection: Via USB to Beelink N150
+      - Testing: Reformatted and tested stable (693 MB/s single write, no errors/disconnects, temps stable, integrity checks passed)
+      - Use: Integrated for download caching (persistent mount via fstab with nofail,noatime)
+      - Stress Test: Concurrent 200GB NAS copy + 15GB download, USB link pegged at 930Mbps, no interference with streaming
+      - Note: Tdarr temp/cache "Z:\tdarr-cache"; Beelink /temp (~/docker-homelab/tdarr/temp) accessible via Windows SMB share Y:\ but not in use

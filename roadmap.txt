@@ -1,0 +1,171 @@
+# Home Server Roadmap - Generated 01/JAN/2026 12:00 AEDT
+
+## Notes
+- **Planned immediate next steps in order**:
+  1. Next Cloud
+  2. Dashboard
+  3. tbd
+
+- Use open-source, cost-effective solutions (Ubuntu, TrueNAS, OpenWRT, OPNsense).
+
+## Explore *arr Apps
+- **Purpose:**
+  - Add media automation (music, eBooks, comics, transcoding, indexers).
+- **Plan:**
+  - Evaluate Lidarr (music).
+  - Evaluate Readarr (eBooks).
+  - Evaluate Mylar3 (comics).
+  - Install via Docker.
+  - Integrate with Prowlarr/qBittorrent/Jellyfin.
+  - Add Jellyseerr for requests/discovery (pending evaluation).
+  - Bazarr for subtitles (focus on forced subs for mixed-language content, e.g., non-English in English movies).
+  - theme.park for UI themes (pending/low-priority).
+- **Status:**
+  - Pending more indexers/evaluation, plus Jellyseerr/theme.park.
+
+## Self-Host Nextcloud
+- **Purpose:**
+  - File sync/storage (Nextcloud).
+- **Plan:**
+  - Install via Docker on Beelink.
+  - Configure Nextcloud for csokonay.online domain.
+  - Review E:\Documents, E:\Downloads for Nextcloud integration.
+- **Status:**
+  - Complete (merged main stack, local volumes, MariaDB/Redis/opcache tuning, custom SMB image, internal Caddy proxy, external HTTPS/domain via nextcloud.csokonay.online stable, app/client sync working, TrueNAS MediaShare mounted as External Storage via SMB/media_user—snappy access achieved).
+  - Achieved: Full performance/security polish, docs/files central integration.
+  - Next: Move to Dashboards (Homarr/Notifiarr) for centralized management/monitoring.
+
+## Integrate Snapcast
+- **Purpose:**
+  - Synchronous multiroom audio playback, extending Jellyfin for Sonos-like audio distribution.
+- **Plan:**
+  - Install Snapserver on home server.
+  - Configure Jellyfin audio output to Snapserver's fifo (/tmp/snapfifo).
+  - Set up Snapclients on devices.
+  - Use codecs like FLAC/Opus for low-latency sync.
+- **Status:**
+  - Not started.
+  - Requires server/client setup and Jellyfin integration.
+
+## Dashboards and Centralized Management
+- **Purpose:**
+  - Organize growing Docker services.
+  - Centralize notifications/monitoring for easier management and learning.
+- **Plan:**
+  - Install Homarr (dashboard with widgets for *arr/Jellyfin/qBittorrent/TrueNAS) via Docker on Beelink.
+  - Install Notifiarr (notifications, TRaSH sync, system health) via Docker on Beelink.
+  - Integrate with existing apps for overview (e.g., stalled alerts, drive risks).
+  - Test for Jellyfin external usability.
+- **Status:**
+  - Not started.
+
+## Explore Tdarr for AV1 Transcoding
+- **Purpose:**
+  - Transcoding for library compression to save space.
+- **Plan:**
+  - Explore AV1 transcoding.
+- **Status:**
+  - Not started.
+
+## Explore Forking Radarr
+- **Purpose:**
+  - Bucket-list learning project to fork Radarr (C#/.NET) for custom features like revived Drone Factory.
+- **Plan:**
+  - Start with VS Code setup.
+  - GitHub clone.
+  - Contribute open-source.
+- **Status:**
+  - Not started.
+  - Post-setup learning project.
+
+## Self-Host Monero Node
+- **Purpose:**
+  - Run a full Monero node for local wallet syncing (e.g., Cake Wallet) and network contribution, emphasizing privacy against suppression.
+- **Plan:**
+  - Monitor resources/bandwidth ongoing.
+  - Resync to full node to support monero project.
+  - Add --restricted-rpc and SSL for remote sync.
+- **Status:**
+  - Not started.
+
+## IPv6 Exploration
+- **Purpose:**
+  - Learn/setup IPv6 for potential speed gains, NAT simplification; cautious due to past hack concern.
+- **Plan:**
+  - Research official docs, test in isolated setup, monitor security.
+- **Status:**
+  - Not started.
+
+## Flint2 Router Downstairs
+- **Purpose:**
+  - Replace/improve downstairs networking with Flint2 (GL.iNet?), learn VLANs for Home Assistant/IoT isolation.
+- **Plan:**
+  - Integrate with OPNsense, setup VLAN for HA, sign up Nabu Casa, local Tuya control, voice assist no-cloud.
+- **Status:**
+  - Not started; box of IoT devices pending (switches, etc.).
+
+## QoS Dynamic Bandwidth Scripting
+- **Purpose:**
+  - Automate QoS adjustments for peak hours (e.g., lower to 600-700Mbps down 5pm-midnight for low jitter).
+- **Plan:**
+  - Script FQ_CoDel tweaks based on time/load, test with Waveform.
+- **Status:**
+  - Pending eval; current manual tuning A+ daytime (750/95 or 950), but evening drops.
+
+## Ethernet Cable Testing
+- **Purpose:**
+  - Test spare cables/house run (50-70m) for 2.5G capability using crimp tool, keepLiNK spare port, CHOCKSMAINPC NIC, Proxmox ports.
+- **Plan:**
+  - Crimp/test short cable first, then long run; consider ISP 2G upgrade if viable (budget/dad concerns).
+- **Status:**
+  - Not started.
+
+## Additional Software Exploration
+- **Purpose:**
+  - Setup/eval open-source tools for homelab.
+- **Plan:**
+  - Nextcloud (self-host files); Suricata (IDS/IPS); Crontab Guru/Cronitor (job monitoring); Prometheus/Grafana/InfluxDB/Telegraf/Netdata (monitoring); Duplicati (backups).
+- **Status:**
+  - Not started.
+
+## Tailscale Advanced
+- **Purpose:**
+  - Advanced Tailscale usage.
+- **Plan:**
+  - Explore exit nodes/filesharing post-stability.
+- **Status:**
+  - Pending exploration.
+
+## Unified Backups
+- **Purpose:**
+  - Centralize all backups to NAS /backups folder, with secondary Syncthing copy.
+- **Plan:**
+  - Script/automate for all services (e.g., Jellyfin, HA, etc.).
+- **Status:**
+  - Partial (OPNsense/Proxmox done); expand.
+
+## Homelab Docs Cleanup
+- **Purpose:**
+  - Split homelab_setup.txt into overview, NAS details, software stack; consider self-hosting as webpage for live edits/reference.
+- **Plan:**
+  - Restructure files, host on local server (e.g., via Docker/Nextcloud).
+- **Status:**
+  - Not started.
+
+## Raspberry Pi Dashboard
+- **Purpose:**
+  - Build advanced monitoring dashboard with Prometheus/Grafana/etc., cycle pages on timer/metrics (e.g., Jellyfin watch triggers Homarr focus, spikes rotate to CPU/net views).
+- **Plan:**
+  - Use Pi for dedicated TV display (independent of PC); integrate with monitoring tools; keep PC for Wallpaper Engine when wanted.
+- **Status:**
+  - Not started; Homarr currently on PC HDMI.
+
+## Proxmox WAN Entry Setup
+- **Purpose:**
+  - Firewall/router with QoS at NBN entry (upstairs), on old PC as Proxmox hypervisor for scalability/learning.
+- **Plan:**
+  - Passthrough NICs to OPNsense VM for negligible overhead, configure QoS (FQ_CODEL/CAKE), prioritize downstairs (Tenda 192.168.0.x), repurpose NF18 upstairs LAN.
+- **Status:**
+  - Dynamic bandwidth scripting evaluation pending.
+- **Next:**
+  - Dynamic bandwidth scripting eval for QoS, full live.

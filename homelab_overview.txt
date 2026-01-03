@@ -1,0 +1,53 @@
+# Homelab Setup Report - Generated 01/JAN/2026 12:00 AEDT
+
+## Network Setup
+#### Network Topology
+
+This section provides an overview of the current network structure based on the completed setups. I've used a hierarchical text-based diagram for clarity, followed by explanations. This reflects the actual implemented components, connections, and IPs.
+
+**High-Level Topology Diagram (Text-Based):**
+
+ISP (NBN Connection - Upstairs Entry Point)
+|
+|-- OPNsense (Firewall/Router VM on Proxmox WAN PC)
+    |
+    |-- WAN: ix0 (Direct to NBN UDNI, Public IP: 180.150.66.156)
+    |
+    |-- LAN: ix1 (192.168.1.1/24, DHCP Enabled)
+    |   |
+    |   |-- Tenda MX12 Mesh (WAN: 192.168.1.10)
+    |       |
+    |       |-- Downstairs LAN: 192.168.0.x (Hosts Main Devices/Services)
+    |           |
+    |           |-- keepLiNK KP-9000-9XHML-X Switch (IP: 192.168.0.10, Core Switch)
+    |               |
+    |               |-- Beelink N150 Mini PC (IP: 192.168.0.9, Docker Host for Jellyfin, *arr Apps, qBittorrent, etc.)
+    |               |-- TrueNAS Scale NAS (IP: 192.168.0.8, Storage/Backups, Apps like Bazarr/Tdarr Node)
+    |               |-- TP-Link LiteWave LS105GP PoE Switch (Daisy-Chained to keepLiNK, Powering 2 SMLight Devices: one in Zigbee mode, the other as Bluetooth mesh hub)
+    |               |-- SLZB-06M Zigbee Coordinator (IP: 192.168.0.12, Connected via TP-Link for Home Assistant)
+    |               |-- Other LAN Devices (e.g., CHOCKSMAINPC, TVs, Phones via WiFi/Ethernet)
+    |
+    |-- OPT1: ix2 (192.168.20.1/24, DHCP Enabled)
+        |
+        |-- Netcomm NF18Mesh Modem (WAN: 192.168.20.12, Mode: Double NAT with LAN 192.168.30.1/24)
+            |
+            |-- Upstairs LAN: 192.168.30.x (DHCP 192.168.30.10-250)
+                |
+                |-- Proxmox WAN PC Management (vmbr0 on nic3, DHCP IP: 192.168.30.14)
+                |-- Dad's PC (IP: 192.168.30.3 via Reservation)
+                |-- External-Tester (Alpine CT on Proxmox for Connectivity Testing)
+                |-- Other Upstairs Devices (e.g., Google TV for Jellyfin Casting, Parents' Phones)
+
+Overlay Networks:
+- Tailscale (Mesh VPN for Remote Access - On Beelink, CHOCKSMAINPC, Phone, Proxmox WAN PC/OPNsense)
+  - Tailnet IPs: CHOCKSMAINPC (100.108.206.83), Beelink (100.75.79.68), Phone (100.64.40.62), Proxmox (100.112.76.14), truenas-scale (100.75.31.105)
+
+**Key Explanations:**
+- **Entry Point:** ISP NBN connects directly to OPNsense WAN (ix0 on the Proxmox-hosted VM), which handles firewall, routing, and QoS (FQ_CoDel configured for low jitter/bufferbloat).
+- **Downstairs Network (Main LAN):** OPNsense LAN (ix1) provides WAN to Tenda MX12, which hosts the primary 192.168.0.x subnet. The keepLiNK switch acts as the core, connecting Beelink (server for media/Docker services), TrueNAS (NAS storage), and other devices. TP-Link PoE switch is daisy-chained to keepLiNK and powering 2 SMLight devices (one in Zigbee mode, one as Bluetooth mesh hub).
+- **Upstairs Network:** OPNsense OPT1 (ix2) provides WAN to NF18Mesh (in double NAT mode with its own 192.168.30.x LAN). This isolates upstairs devices, including Proxmox management access (via DHCP on vmbr0/nic3), dad's PC, the external-tester Alpine CT on Proxmox for connectivity testing, Google TV, and parents' phones.
+- **Proxmox WAN PC:** Hosts OPNsense VM with PCI passthrough for NICs (ix0/ix1/ix2). Management is via upstairs NF18 LAN (192.168.30.14), with Tailscale for remote stability.
+- **Security/Access:** Port forwards on OPNsense (80/443 to Tenda 192.168.1.10) and Tenda (80/443 to Beelink 192.168.0.9 for Caddy). UFW on Beelink allows specific ports. Tailscale overlays for secure remote access.
+- **Media/Storage Flow:** Jellyfin/*arr apps on Beelink pull from TrueNAS SMB shares (/mnt/media). Downloads cache on Beelink SSD, then move to NAS.
+- **Home Assistant:** VM on TrueNAS (IP: 192.168.0.2 via downstairs LAN), connected to SLZB-06M Zigbee (192.168.0.12).
+- **Ethernet Run Note:** The connection between OPNsense OPT1 (ix2) and Tenda MX12 is approximately 100m with two plugs. This run needs testing for 2.5G capability to assess 2G internet upgrade viability. Due to shortage of 2.5G ports upstairs, consider migrating Proxmox management from ix3/nic3 to the onboard 1G Ethernet port (Intel 82579V) to free ix3 for direct connection to CHOCKSMAINPC's 2.5G onboard NIC for testing.  

@@ -1,0 +1,100 @@
+Full Audio Setup Documentation
+Date: December 06, 2025
+For: User's PC Audio Configuration
+Purpose: Ready reckoner for future reference or sharing with AI assistants
+Hardware Components
+
+Motherboard: Gigabyte X670 Gaming X AX (Realtek ALC1220 audio codec, rear jacks: Blue - Line In, Green - Line Out/Headphone, Pink - Mic In)
+CPU: AMD 9800X3D (with integrated GPU, but not used due to performance lag with multiple monitors)
+Graphics Card: NVIDIA RTX 4090 (HDMI output for audio/video to receiver; only one HDMI port, three DisplayPorts)
+AV Receiver: Pioneer VSX-523 (5.1-channel, HDMI input for PC audio, subwoofer pre-out, supports Dolby/DTS decoding)
+
+Speakers
+Front Left / Right (Music & Main Stereo) - DALI Concept 1 (Bookshelf Speakers)
+Center Channel - Bowers & Wilkins CC6 S2
+Surrounds - Boston Acoustics SoundWare XS Special Edition (5.1 set) Compact satellite speakers
+Powered Subwoofer: Edifier T5 (connected to Pioneer sub pre-out)
+Subwoofer Amplifier: Amiya A1001 (TPA3116D2 mono, max 100W, 4-8Ω, 20Hz-20kHz, RCA input/output, low-pass filter 40-300Hz, -12dB/octave, powered by 12-24V DC adapter)
+Tactile Shaker: Dayton Audio BST-1 Pro (6ohm, 50W, connected to Amiya amp speaker outputs)
+Headphones: AKG702, connected via USB DAC
+Chromecast: Connected via Arylic LP10 (audio output to motherboard blue line-in jack)
+Other: HDMI dummy plug (attempted for audio persistence, but ineffective; forget for now)
+
+Speaker Configuration Notes
+Front L/R set to Small in Pioneer AVR
+Crossover target: ~80 Hz
+Subwoofer handles low bass for both movies and music
+DALI Concept 1 provides improved midrange clarity, imaging, and musicality compared to compact satellites
+
+Physical Connections
+
+RTX 4090 HDMI Out -> Pioneer VSX-523 HDMI In (for 5.1 audio and video)
+Pioneer VSX-523 Sub Pre-Out (RCA) -> Edifier T5 Input (optionally with RCA Y-splitter if sharing, but shaker sourced from PC)
+Motherboard Green Jack (3.5mm Line Out) -> 3.5mm to Dual RCA Cable -> Amiya A1001 RCA Input
+Amiya A1001 Speaker Outputs -> Speaker Wire -> Dayton BST-1 Shaker (observe polarity)
+Arylic LP10 Output -> 3.5mm Cable -> Motherboard Blue Jack (Line In) for Chromecast streaming
+USB DAC -> PC USB Port -> Headphones
+Amiya Amp Power: 12V DC adapter (start low to avoid overpowering shaker)
+Shaker Mounting: Planned for Herman Miller Aeron chair (non-destructive clamp/bracket to frame/seat pan, e.g., aluminum profile + L-bracket)
+
+Software and Configurations
+
+OS: Windows 11
+Audio Drivers: Latest Realtek HD Audio from Gigabyte website
+Primary Routing Software: Voicemeeter Banana (free, VB-Audio)
+Hardware Outputs:
+A1: USB Audio DAC (headphones)
+A2: NVIDIA High Definition Audio (HDMI to Pioneer VSX-523)
+A3: Realtek(R) Audio (green jack to Amiya amp/shaker)
+
+Routing: Virtual Input lit to A1, A2, A3 (for simultaneous or switched output)
+EQ on A3: Low-pass filter (boost 20-80Hz, cut above 150Hz) for bass-only to shaker
+Latency: Buffer set to 192-256 samples (low-latency mode, tuned for sync)
+System Settings: Prefer 8 Channels enabled for multi-channel support
+Virtual Devices: Voicemeeter Input (stereo default for headphones), Voicemeeter AUX Input (5.1 for surround)
+
+Realtek Audio Console: Installed for mobo jack assignments (green as line out, blue as line in)
+Switching Software: SoundSwitch (profiles for toggling between Voicemeeter Input and AUX; one hotkey toggle)
+Profile 1: "5.1 Daily" - Default to Voicemeeter AUX Input (5.1 surround)
+Profile 2: "Headphones Gaming" - Default to Voicemeeter Input (stereo with Dolby Atmos)
+Hotkey: Single toggle (e.g., Ctrl+Alt+1) for switching modes
+
+Dolby Atmos for Headphones: Enabled on USB DAC (Settings > System > Sound > USB DAC > Spatial sound > On; upmixes stereo to virtual surround)
+Media Players: Configure for 5.1 output (e.g., VLC: Tools > Preferences > Audio > Output > DirectX > 5.1; set to Auto or Dolby/DTS for content)
+Other: No HDMI dummy plug in use (ineffective for audio persistence during monitor sleep)
+
+Usage Notes
+
+Daily (5.1): Pioneer handles surround + Edifier sub; shaker adds tactile bass via A3.
+Headphones Mode: Stereo via USB DAC + Atmos + shaker bass.
+Shaker Always On: Routed to A3 in both modes; adjust Amiya gain/low-pass for intensity.
+Testing: Use YouTube bass/Dolby/DTS tests; ensure no distortion/clipping.
+Troubleshooting: Restart Voicemeeter engine if routing fails; check Windows Sound settings for defaults.
+
+Equaliser APO config
+
+# --- SECTION 1: 5.1 AIRY UPMIX (Voicemeeter AUX) ---
+# Targets 5.1 surround profile
+Device: Voicemeeter Aux Input VB-Audio
+
+Stage: pre-mix
+# Center and Sub (keeping your stable mix)
+Copy: C=0.5*L+0.5*R
+Copy: LFE=0.5*L+0.5*R
+
+# THE AIRY REARS:
+# subtract the channels from each other to extract the "ambient" (non-vocal) sounds and boost them.
+# 
+Copy: SL=1.3*L + -0.3*R
+Copy: SR=1.3*R = -0.3*L
+
+# Preamp to prevent clipping from the 1.2x boost
+Preamp: -3 dB
+
+# --- SECTION 2: ARYLIC LINE-IN BOOST ---
+# Targets the Blue jack on your Gigabyte X670
+Device: Line In Realtek Audio
+
+# amazing +15dB boost
+Preamp: 10 dB
+VSTPlugin: Library "C:\Program Files\VSTPlugins\ReaPlugs\reagate-standalone.dll" Hipass 0 Thresh 0.00562341 Attack 0.00467278 Release 0.20123 Pre-open 0.00762284 Hold 0.153719 Lowpass 1 SignIn 0 AudIn 0 Dry 0 Noise 0 Wet 1 Hystrsis 1 PreviewF 0 "RMS size" 0.147734 Usemidi 0 MidiNote 0.543307 MidiChan 0 InvrtWet 0

@@ -1,0 +1,3 @@
+## Clients
+- Pixel 7 Pro (Android 10)
+- Chromecast (Google Cast)

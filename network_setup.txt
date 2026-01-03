@@ -1,0 +1,131 @@
+- **Local Server IP**:
+  - 192.168.0.9 (Beelink N150, static on enp1s0)
+- **NAS IP**:
+  - 192.168.0.8 (TrueNAS Scale, static)
+- **Local Network**:
+  - 192.168.0.x subnet (192.168.20.1 for Sonarr/Prowlarr/Radarr local access)
+- **Public IP**:
+  - 180.150.66.156 (dynamic, Aussie Broadband, rarely changes)
+- **Port Forwarding**:
+  - **OPNsense**:
+    - WAN TCP any to WAN address port 443 redirect to 192.168.1.10 port 443 (HTTPS to Tenda, filter Add associated, visible WAN rule, external Jellyfin access restored)
+    - WAN TCP any to WAN address port 80 redirect to 192.168.1.10 port 80 (HTTP to Tenda, filter Add associated, visible WAN rule)
+  - **Tenda MX12 Mesh**:
+    - 443 -> 192.168.0.9:443 (Caddy on Beelink)
+    - 80 -> 192.168.0.9:80 (Caddy on Beelink)
+- **Router**:
+  - Tenda MX12 Mesh (hosts 192.168.0.x LAN, connected to Netcomm NF18Mesh for WAN, WAN from OPNsense ix1)
+- **Modem**:
+  - **Netcomm NF18Mesh**:
+    - Location: Upstairs
+    - Mode: Double NAT mode (WAN static 192.168.20.12 from OPNsense ix2, LAN IP 192.168.30.1/24 with DHCP 192.168.30.10-250 lease time 3600s, provides LAN to upstairs network and Proxmox nic3; GUI port 80; WiFi enabled; firewall disabled (power cycle applied); static route for 192.168.0.0/24 via 192.168.20.1; DHCP reservation for dad's PC 192.168.30.3; port forwards added for RDP 3389 TCP/UDP to 192.168.30.3:3389, Proxmox GUI 8006 TCP to 192.168.30.14:8006, Proxmox SSH 2222 TCP to 192.168.30.14:22; WAN services enabled for ICMP/HTTP with ACL restricted to 192.168.0.0/24)
+    - Firmware: NF18MESH.NC.ABB-R6B016.EN (latest per Aussie Broadband Sep 2025)
+- **Router WAN IPs**:
+  - Tenda MX12 Mesh WAN: 192.168.1.10 (from OPNsense ix1)
+- **External Domains**:
+  - jellyfin.csokonay.online -> 180.150.66.156 (A record)
+  - sonarr.csokonay.online -> 180.150.66.156 (A record)
+  - prowlarr.csokonay.online -> 180.150.66.156 (A record)
+  - radarr.csokonay.online -> 180.150.66.156 (A record; cert valid via Let's Encrypt until ~Feb 2026)
+  - media.csokonay.online -> 180.150.66.156 (A record, for Caddy testing without DuckDNS)
+  - shoddy88.duckdns.org (static response)
+- **Firewall**:
+  - **BEELINK**:
+    - UFW: Active
+    - Allowed Ports: 22, 8096, 7878, 8989, 9696, 8080/tcp, 8191/tcp, 3333, 3334/tcp, 3334/udp (added for Bitmagnet), 8265/tcp, 8266/tcp (added for Tdarr), 9705/tcp (added for Huntarr), 5004/tcp (added for tdarr_inform), 18080/tcp, 18081/tcp (added for Monero node), 9999 (added for Dozzle), 80/tcp (added for Caddy), 443/tcp (added for Caddy), 3001/tcp (added for Dashdot), 7879 (added for Radarr4k), 18081/tcp (Monero RPC), 3001/tcp (Dashdot LAN access)
+    - Specific Rules:
+      - sudo ufw allow from 192.168.0.0/24 to any port 18081 proto tcp comment 'Monero RPC local'
+      - sudo ufw allow from 192.168.0.0/24 to any port 3001 proto tcp comment 'Dashdot LAN access'
+- **Networking Components**:
+  - **keepLiNK KP-9000-9XHML-X**:
+    - Type: 8-Port 2.5G Ethernet Switch + 1-Port 10G SFP+ (managed)
+    - IP: 192.168.0.10
+    - MAC: 78:D8:00:32:3C:FA
+    - Firmware: V100.9.9.1.7 (dated June 7 2025)
+    - Hardware: V3.1
+    - Role: Connected as core switch
+    - Connections:
+      - Tenda MX12 uplink to RJ45 port 8
+      - Beelink bond0 to ports 3-4 via static Trunk2
+      - NAS bond1 to ports 1-2 via LACP Trunk1
+    - Configuration: Admin password changed; no errors in port stats/logs; flow control off
+  - **Tenda MX12 Mesh**:
+    - Role: Hosts 192.168.0.x LAN
+    - Uplink: To keepLiNK
+  - **TP-Link LiteWave LS105GP**:
+    - Type: 5-Port PoE Switch (ports 1-4 PoE, port 5 non-PoE)
+    - Connection: Daisy-chained to keepLiNK for PoE continuity
+    - Use: Powering 2 SMLight devices (ports 3-4): one in Zigbee mode, the other as Bluetooth mesh hub, via Cat6 cables
+  - **Realtek RTL8156 USB 2.5G Dongles (Beelink)**:
+    - MACs: 00:e0:4c:68:00:5f and 00:e0:4c:68:00:99
+    - Configuration: Bonded as bond0 balance-rr static aggregation
+  - **SLZB-06M Zigbee Coordinator**:
+    - MAC: 0C:DC:7E:36:E5:D7
+    - IP: 192.168.0.12
+    - Connection: Via TP-Link LS105GP PoE
+    - Mode: Zigbee Coordinator Ethernet
+    - Port: 6638
+    - Baudrate: 115200
+    - Adapter: ember
+    - Firmware: OS v3.1.3, Zigbee 20250220
+- **Tailscale (Mesh VPN for Remote Access)**:
+  - Installation: On Beelink, CHOCKSMAINPC, phone, and Proxmox WAN PC (including OPNsense VM) (16/DEC/2025; free personal plan)
+  - Tailnet IPs:
+    - CHOCKSMAINPC: 100.108.206.83
+    - Beelink: 100.75.79.68
+    - Phone: 100.64.40.62
+    - Proxmox WAN PC (including OPNsense): 100.112.76.14
+    - IPv6: fd7a:115c:a1e0::6301:4f90
+  - MagicDNS: proxmox-wan.tail9c7840.ts.net (for Proxmox WAN PC)
+  - Notes: Enables remote LAN access (e.g., Tor SOCKS 9150 from anywhere); zero-config, encrypted; resolves Feather proxy conflict by using Beelink Tailnet IP:9150 (16/DEC/2025; wallet syncs over Tor .onion RPC remotely); Proxmox access stabilized via Tailscale in double NAT; MagicDNS/resolver tweaks applied; overall network stable
+- **Proxmox WAN PC (Upstairs WAN Entry)**:
+  - **Hardware**:
+    - Motherboard: ASUS Sabertooth X79
+    - CPU: i7-4930K
+    - RAM: 16GB
+    - PSU: 950W (water-cooled)
+    - NICs:
+      - Silicom Quad Port 10GB PCIe RJ45 X540-T4 (04:00.0 nic0 ix0, 04:00.1 nic1 ix1, 06:00.0 nic2 ix2, 06:00.1 nic3)
+      - Onboard Intel 82579V Gigabit (00:19.0 eno1)
+  - **Software**:
+    - Version: Proxmox VE 9.1.1
+    - Filesystem: ext4 on 500GB SSD
+    - Management IP: DHCP 192.168.30.14/24 from NF18 LAN (auto-renews ~10 min)
+    - Hostname: proxmox-wan.local
+    - Features: IOMMU/VT-d enabled, groups separate; firewall disabled
+  - **Networks**:
+    - vmbr0: nic3, DHCP
+  - **Virtual Machines**:
+    - **OPNsense**:
+      - Specs: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, ZFS stripe filesystem, version 25.7.10
+      - Machine Type: q35
+      - PCI Passthrough: 04:00.0/04:00.1/06:00.0 as ix0/ix1/ix2 (PCIe yes, ROM-Bar no), VirtIO vtnet0/vtnet1 removed
+      - Auto-Start: Enabled
+      - Configuration: Wizard completed, domain "tourmaline", DNS 1.1.1.1/8.8.8.8 (override unticked), Unbound enabled with DNSSEC support/harden; admin password set, dashboard up
+      - Interfaces:
+        - WAN: ix0 direct to NBN UDNI (public IP 180.150.66.156, internet working), MTU 1500, blocks RFC1918/bogon unticked
+        - LAN: ix1 192.168.1.1/24 (ISC DHCP enabled, range default)
+        - OPT1: ix2 192.168.20.1/24 (ISC DHCP enabled, range 192.168.20.10-192.168.20.250, DNS 1.1.1.1/8.8.8.8, gateway 192.168.20.1)
+      - Routing: Rules added (LAN to OPT1 pass, OPT1 to LAN pass), ping LAN to OPT1 ok; unplug test completed (Proxmox on OPT1 DHCP 192.168.20.10, ping/GUI/internet working both ways via routing)
+      - Security: OPT1 restricted (block OPT1 to LAN rule added/tested ok, LAN access to OPT1 intact); Proxmox host firewall re-enabled and tested ok (ping/GUI/internet access intact); Proxmox management switched to nic3 (spare X540 port), DHCP IP on 192.168.30.x
+      - QoS: Configured with FQ_CoDel pipes/queues/rules for LAN/OPT1 using multi-interface method, functional with low jitter/bufferbloat (e.g., jitter <20ms under load, A+ on Waveform)
+      - Tools: Nano installed for easier editing
+      - Backups: Via SFTP to NAS (os-sftp-backup plugin installed, URL sftp://root@truenas-scale.tail9c7840.ts.net//mnt/media/media/backups/OPNsense, key /root/.ssh/id_ed25519_backup, 60 backups, enabled)
+      - Other: Static route to 192.168.30.0/24 via gateway 192.168.20.12 added, ICMP/ping access enabled; port forwards for Jellyfin (80/443 to 192.168.1.10, external access restored, visible WAN rules via Add associated)
+  
+  - **Containers**:
+    - **external-tester**:
+      - Type: Alpine CT (lightweight)
+      - Purpose: External connectivity testing
+- **Host Management**:
+    - IP: Proxmox management on DHCP (IP 192.168.30.14 via dhclient renew post-double NAT; Tailscale reconnects ok)
+    - Connectivity: Resolved with NF18 port forwards and WAN services; dad's RDP access confirmed working via 192.168.20.12:3389
+    - Firmware: NF18 firmware confirmed latest (R6B016)
+  - **Host Backups**:
+    - Via CIFS to NAS: Storage ID truenas-backups, server truenas-scale.tail9c7840.ts.net, share MediaShare, subdir backups/proxmox, user media_user, enabled
+    - Scripted: /root/backup-proxmox-host.sh with rsync over SSH key to NAS /proxmox/host, cron daily 4AM
+
+- **SSH Keys**:
+  - C:\Users\shodd\.ssh\id_rsa.pub: Used for Beelink and TrueNAS NAS SSH access.
+  - C:\Users\shodd\.ssh\id_ed25519.pub: Used for Home Assistant SSH access (created 11/DEC/2025).  
+  - /root/.ssh/id_ed25519_backup.pub on OPNsense: ssh-ed25519 AAAAC3NzaC11ZDI1NTE5AAAAICk/wjpFK7W1j9epP/Aw/zRG7FJjYQ+yhaziC/CiD18o opnsense_backup (created 27/DEC/2025 for SFTP backups to NAS).

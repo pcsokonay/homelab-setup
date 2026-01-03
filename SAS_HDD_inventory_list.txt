@@ -1,0 +1,62 @@
+# SAS_HDD_inventory_list.txt - Generated 09/DEC/2025 16:30 AEDT
+
+## Overview
+- Total Drives in Pool: 16 (2x RAIDZ2 vdevs, all 3TB SAS, 7200 RPM)
+- Spares/Removed: Listed separately
+- Columns: Serial (primary ID; devices /dev/sdX are dynamic and change on reboot - not used for identification), Model, Location (cable/group), Age (hours), Health (errors/defects from SMART), Notes
+
+## Current Pool Drives
+| Serial                  | Model            | Location     | Age (hours) | Health                  | Notes                                                               
+|-------------------------|------------------|--------------|-------------|-------------------------|---------------------------------------------------------------------|
+| YXGRDM8K                | HUS72303CLAR3000 | Blank-P1     | 39435       | Healthy                 | Original Hitachi; 0 grown defects, passed short test                
+| YXGSP2TK                | HUS72303CLAR3000 | Blank-P2     | 39435       | Healthy                 | Original Hitachi; 0 grown defects, passed short test                
+| YHK9V59G                | HUS723030ALS640  | Blank-P3     | 10334       | Healthy                 | Original Hitachi; 0 grown defects, passed short test
+| YXGSP3GK                | HUS72303CLAR3000 | Blank-P4     | 39444       | Healthy                 | Original Hitachi; 0 grown defects, passed short test                
+| YHK8L4EG                | HUS723030ALS640  | Blue-1       | 10314       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+| YHK5NS4G                | HUS723030ALS640  | Blue-2       | 10393       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+| YHK854TG                | HUS723030ALS640  | Blue-3       | 9693        | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+| YHK8L3TG                | HUS723030ALS640  | Blue-4       | 10316       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test; reinstated to pool (previously miscategorized as spare) |
+| YHK856VG                | HUS723030ALS640  | Green-P1     | 10266       | Healthy                 | Replacement Hitachi for faulted Seagate (added 30/OCT/2025); 0 grown defects, passed short test at 10254 hours; manufactured 2012 week 23
+| Z298JJEC 00009417HN8A   | ST330006 NEO3000 | Green-P2     | 51623       | Healthy                 | Replacement Seagate for second faulty Toshiba (added 22/OCT/2025); 0 grown defects, passed long test
+| YHKANHXG                | HUS723030ALS640  | Green-P3     | 58128       | OK (2 grown defects)    | New Hitachi added 02/DEC/2025 replacing Seagate; 2 grown defects; 3078 corrected read errors, 129943 corrected write errors; background long test in progress (51.35% complete); manufactured 2012 week 23; resilvering succeeded no errors; monitor closely (high error counts) |
+| YHK37J1G                | HUS723030ALS640  | Green-P4     | 11665       | Healthy                 | Original Hitachi; 0 grown defects, passed short test; high corrected errors (monitor)
+| YHK2NRMG                | HUS723030ALS640  | Yellow-1     | 10334       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+| YHK85BXG                | HUS723030ALS640  | Yellow-2     | 10339       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+| YHK2NSPG                | HUS723030ALS640  | Yellow-3     | 10449       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+| YHK2WMLG                | HUS723030ALS640  | Yellow-4     | 10339       | Healthy                 | Added to new vdev 03/NOV/2025; 0 grown defects, passed short test   
+
+## Spares/Removed Drives
+| Status            | Serial                | Model            | Location | Age (hours) | Health       | Notes                                     
+|-------------------|-----------------------|------------------|----------|-------------|--------------|-------------------------------------------|
+| Removed (faulty)  | 35G0A6PIFVL9          | MG03SCA300       | N/A      | ~74,500     | Faulted***   | First faulty Toshiba/Dell; failed SMART long test; set aside 21/OCT/2025
+| Removed (faulty)  | 35G0A6APFVL9          | MG03SCA300       | N/A      | TBD         | Faulted****  | Second faulty Toshiba/Dell; set aside 22/OCT/2025
+| Removed (faulty)  | 35G0A6PHFVL9          | MG03SCA300       | Green-P1 | 75749       | Faulted***** | Third faulty Toshiba/Dell; failed SMART long test; set aside 25/OCT/2025
+| Removed (faulty)  | Z298GNKV 00009410PCBE | ST330006 NEO3000 | Green-P1 | 51613       | Faulted**    | Replacement Seagate for third faulty Toshiba (added 25/OCT/2025); faulted 30/OCT/2025 with high read/write errors, I/O delays, and mechanical clacking; set aside
+| Removed (replaced)| Z298JJF1 00009417HNKD | ST330006 NEO3000 | Green-P3 | 52149       | Healthy      | Replacement Seagate for first faulty Toshiba (added 21/OCT/2025); 1 uncorrectable error, long test passed 14/NOV/2025—no growth; removed 02/DEC/2025 for new Hitachi; moved to spares
+| Spare             | [Unknown]             | Hitachi 3TB      | N/A      | TBD         | TBD          | Hitachi arrived        
+| Spare             | [Unknown]             | Hitachi 3TB      | N/A      | TBD         | TBD          | Hitachi arrived        
+| Spare             | [Unknown]             | Hitachi 3TB      | N/A      | TBD         | TBD      	   | Hitachi arrived        
+| Spare             | [Unknown]             | Hitachi 3TB      | N/A      | TBD         | TBD          | Hitachi arrived        
+| Spare             | [Unknown]             | Hitachi 3TB      | N/A      | TBD         | TBD      	   | Hitachi arrived        
+| Spare             | [Unknown]             | Hitachi 3TB      | N/A      | TBD         | TBD          | Hitachi arrived        
+| Spare             | YHKB99NG              | HUS723030ALS640  | white-P1 | 10307       | Healthy      | New addition 09/DEC/2025; 0 grown defects; manufactured 2012 week 23; high corrected errors (48199 read, 747860 write) but all handled; short/long tests pending; monitor; power unplugged for cold standby
+| Spare             | YHK5WJ4G              | HUS723030ALS640  | white-P2 | 10398       | Healthy      | New addition 09/DEC/2025; 0 grown defects; manufactured 2012 week 23; corrected errors (19327 read, 643590 write) all handled; short/long tests pending; power unplugged for cold standby
+| Spare             | YHK5J3RG              | HUS723030ALS640  | white-P3 | 2772        | Healthy      | New addition 09/DEC/2025; 0 grown defects; manufactured 2012 week 23; low hours; corrected errors (16072 read, 459203 write) all handled; short/long tests pending; power unplugged for cold standby
+| Spare             | YHJZ41VG              | HUS723030ALS640  | white-P4 | 10219       | Healthy      | New addition 09/DEC/2025; 0 grown defects; manufactured 2012 week 23; high write corrections (13167 read, 885500 write) but all handled; short/long tests pending; monitor; power unplugged for cold standby
+| Dead              | [Unknown]             | Hitachi YH       | N/A      | N/A         | Dead     	   | 2x shorted Hitachi YH; tested dead        
+| Dead              | [Unknown]             | HGST YX          | N/A      | N/A         | Dead     	   | 1x shorted HGST YX; tested dead           
+
+## Next Steps for Inventory
+- Fill any remaining TBDs via smartctl -a for each (age from Power_On_Hours, health from Reallocated_Sector_Ct/Grown_Defects).
+- Refine locations for any remaining unconfirmed drives if possible (e.g., during visual access).
+- Update after 7 more drives are tested/added later this month; prepare for potential third vdev or new pool.
+- Re-test new Green-P3 (YHKANHXG) post-long test completion; consider proactive replacement if defects grow or test fails.
+- Run short/long SMART tests on new white-PX spares if desired before final storage; evaluate for third vdev if healthy.
+- Review SMART test schedules and consider removing manual/automated ones to rely on built-in monitoring.
+
+## Notes
+* Previously unconfirmed locations now resolved for YXGSP3GK (Green-P4), YXGRDM8K (Blank-P1), YXGSP2TK (Blank-P3).
+** High read/write errors (332/1100); I/O delays and ENXIO failures; mechanical clacking
+*** 99 errors; grown defects 3
+**** 16 errors
+***** Failed long test at LBA 1345396536 (medium error); grown defects 7; corrected read errors 2997
