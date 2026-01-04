@@ -1,0 +1,34 @@
+# SSH Setup - Generated 04/JAN/2026
+
+## Overview
+- Centralized SSH configurations for homelab access.
+- Key-based auth preferred for security (e.g., ed25519 or rsa keys at C:\Users\shodd\.ssh).
+- Access from CHOCKSMAINPC (downstairs) to devices.
+
+## Configurations
+- **Host ha** (Home Assistant):
+  Host ha
+  HostName 192.168.0.2
+  Port 22222
+  User chocks
+  IdentityFile C:\Users\shodd\.ssh\id_ed25519
+  MACs hmac-sha2-512-etm@openssh.com
+
+- **Host beelink**:
+  Host beelink
+  HostName 192.168.0.9
+  Port 22
+  User chocks
+  IdentityFile C:\Users\shodd\.ssh\id_rsa
+
+- **Host nas** (TrueNAS):
+  Host nas
+  HostName 192.168.0.8
+  Port 22
+  User root
+  IdentityFile C:\Users\shodd\.ssh\id_rsa
+
+## Notes
+- Pulled from CHOCKSMAINPC ~/.ssh/config.
+- For new hosts, add similar blocks.
+- Ensure keys are secure (permissions 600).
