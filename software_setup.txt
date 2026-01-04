@@ -4,13 +4,14 @@
     - Ubuntu Server 24.04.3 LTS (Beelink N150, installed, deferred updates installed for openssh/coreutils; timezone Australia/Sydney, HWE kernel installed for i915 support)
   - **Scripts**:
     - /cache/downloads/qb_complete_copy.sh: Auto-copies completed torrents to staging/NAS
-    - /usr/local/bin/striptracks_batch.sh: Used to run striptracks on entire media library
+    - /usr/local/bin/striptracks.sh: Used to run striptracks on entire media library
     - ~/docker-homelab/SABnzbd/config/scripts/sab_combined.sh: Runs striptracks on media downloaded through SABnzbd
     - ~/docker-homelab/wait-for-nas.sh: Ensures that the NAS is correctly mounted after boot (avoids boot race issues)
     - ~/docker-homelab/qb_port_sync.sh: Syncs the vpn port with qbittorrent every 5 minutes for port forwarding
     - ~/docker-homelab/stack-health-check.sh: Monitors stack health via escalating curls on Radarr/Sonarr/qBittorrent ports; restarts compose on failure and loops until success (30s sleep, reduced logging to issues only; infinite retries; tested and live) 
       - Logs: To /var/log/stack-health.log
       - Service: Turned into a system service at /etc/systemd/system/stack-health.service
+    - ~/docker-homelab/rebuild.sh: Bash script to rebuild a single Docker service with latest image (pull, down, build --no-cache, up -d); usage ./rebuild.sh <service_name>
   - **Crontab**:
     - */5 * * * * /home/chocks/docker-homelab/qb_port_sync.sh
     - 0 3 * * * /home/chocks/docker-homelab/jellyfin_backup.sh
