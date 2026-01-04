@@ -109,6 +109,7 @@
       - Categories: movies (save /downloads/complete/movies), tv (save /downloads/complete/tv), tl (save /downloads/complete/tl, tag tl_tracker), movies4k (save /downloads/complete/movies_4K)
       - Script: qb_port_sync.sh (syncs Proton port every 5 min via cron)
       - Configuration: Hardlinks disabled (use copies for striptracks compatibility)
+  - **Utilities**:
 	  - **Decluttarr**:
       - Status: Running live and handling queue cleanups effectively, with TL protection via tags
     - **Striptracks Setup**:
