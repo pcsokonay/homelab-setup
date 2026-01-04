@@ -1,10 +1,9 @@
-# Home Server Roadmap - Generated 03/JAN/2026 12:00 AEDT
+# Home Server Roadmap - Generated 04/JAN/2026 12:00 AEDT
 
 ## Notes
 - **Planned immediate next steps in order**:
-  1. Next Cloud
-  2. Dashboard
-  3. tbd
+  1. Dashboard
+  2. tbd
 
 - Use open-source, cost-effective solutions (Ubuntu, TrueNAS, OpenWRT, OPNsense).
 
@@ -23,17 +22,6 @@
 - **Status:**
   - Pending more indexers/evaluation, plus Jellyseerr/theme.park.
 
-## Self-Host Nextcloud
-- **Purpose:**
-  - File sync/storage (Nextcloud).
-- **Plan:**
-  - Install via Docker on Beelink.
-  - Configure Nextcloud for csokonay.online domain.
-  - Review E:\Documents, for Nextcloud integration.
-- **Status:**
-  - Complete (merged main stack, local volumes, MariaDB/Redis/opcache tuning, custom SMB image, internal Caddy proxy, external HTTPS/domain via nextcloud.csokonay.online stable, app/client sync working, TrueNAS MediaShare mounted as External Storage via SMB/media_user—snappy access achieved).
-  - Achieved: Full performance/security polish, docs/files central integration.
-
 ## Integrate Snapcast
 - **Purpose:**
   - Synchronous multiroom audio playback, extending Jellyfin for Sonos-like audio distribution.
@@ -45,18 +33,6 @@
 - **Status:**
   - Not started.
   - Requires server/client setup and Jellyfin integration.
-
-## Dashboards and Centralized Management
-- **Purpose:**
-  - Organize growing Docker services.
-  - Centralize notifications/monitoring for easier management and learning.
-- **Plan:**
-  - Install Homarr (dashboard with widgets for *arr/Jellyfin/qBittorrent/TrueNAS) via Docker on Beelink.
-  - Install Notifiarr (notifications, TRaSH sync, system health) via Docker on Beelink.
-  - Integrate with existing apps for overview (e.g., stalled alerts, drive risks).
-  - Test for Jellyfin external usability.
-- **Status:**
-  - Not started.
 
 ## Explore Tdarr for AV1 Transcoding
 - **Purpose:**
@@ -123,7 +99,7 @@
 - **Purpose:**
   - Setup/eval open-source tools for homelab.
 - **Plan:**
-  - Nextcloud (self-host files); Suricata (IDS/IPS); Crontab Guru/Cronitor (job monitoring); Prometheus/Grafana/InfluxDB/Telegraf/Netdata (monitoring); Duplicati (backups).
+  - Suricata (IDS/IPS); Crontab Guru/Cronitor (job monitoring); Prometheus/Grafana/InfluxDB/Telegraf/Netdata (monitoring); Duplicati (backups); Scanopy (https://github.com/scanopy/scanopy for network visualization and auto-discovery).
 - **Status:**
   - Not started.
 
@@ -141,7 +117,7 @@
 - **Plan:**
   - Script/automate for all services (e.g., Jellyfin, HA, etc.).
 - **Status:**
-  - Partial (OPNsense/Proxmox done); expand.
+  - In progress.
 
 ## Homelab Docs Cleanup
 - **Purpose:**
@@ -151,13 +127,13 @@
 - **Status:**
   - Not started.
 
-## Raspberry Pi Dashboard
+## Advanced Monitoring Dashboard on Raspberry Pi
 - **Purpose:**
-  - Build advanced monitoring dashboard with Prometheus/Grafana/etc., cycle pages on timer/metrics (e.g., Jellyfin watch triggers Homarr focus, spikes rotate to CPU/net views).
+  - Build advanced monitoring dashboard with Prometheus/Grafana/InfluxDB/Telegraf/Netdata, cycle pages on timer/metrics (e.g., Jellyfin watch triggers Homarr focus, spikes rotate to CPU/net views); organize growing Docker services and centralize notifications/monitoring for easier management and learning.
 - **Plan:**
-  - Use Pi for dedicated TV display (independent of PC); integrate with monitoring tools; keep PC for Wallpaper Engine when wanted.
+  - Use Pi for dedicated TV display (independent of PC); integrate with existing apps for overview (e.g., stalled alerts, drive risks); keep PC for Wallpaper Engine when wanted.
 - **Status:**
-  - Not started; Homarr currently on PC HDMI.
+  - In progress.
 
 ## Proxmox WAN Entry Setup
 - **Purpose:**
@@ -168,13 +144,3 @@
   - Dynamic bandwidth scripting evaluation pending.
 - **Next:**
   - Dynamic bandwidth scripting eval for QoS, full live.
-
-## Docs Management
-- **Purpose:**
-  - Versioned, live-referenced homelab documentation for easy updates and AI access (frees up chat context; learning Git/VS Code).
-- **Plan:**
-  - Use GitHub repo[](https://github.com/pcsokonay/homelab-setup) for all .txt files.
-  - Edit locally in VS Code, stage/commit/push for instant raw URL updates (e.g., https://raw.githubusercontent.com/pcsokonay/homelab-setup/main/roadmap.txt).
-  - Optional: Add .gitignore for any future secrets/temp files.
-- **Status:**
-  - Complete (initial upload 03/JAN/2026; all split .txt files live; raw access tested and working).
