@@ -1,5 +1,5 @@
 - **Local Server IP**:
-  - 192.168.0.9 (Beelink N150, static on enp1s0)
+- 192.168.0.9 (Beelink N150, static on enp1s0, systemd-resolved DNS 192.168.1.1)
 - **NAS IP**:
   - 192.168.0.8 (TrueNAS Scale, static)
 - **Local Network**:
@@ -14,7 +14,7 @@
     - 443 -> 192.168.0.9:443 (Caddy on Beelink)
     - 80 -> 192.168.0.9:80 (Caddy on Beelink)
 - **Router**:
-  - Tenda MX12 Mesh (hosts 192.168.0.x LAN, connected to Netcomm NF18Mesh for WAN, WAN from OPNsense ix1)
+    - Tenda MX12 Mesh (hosts 192.168.0.x LAN, connected to Netcomm NF18Mesh for WAN, WAN from OPNsense ix1, WAN DNS 192.168.1.1)
 - **Modem**:
   - **Netcomm NF18Mesh**:
     - Location: Upstairs
@@ -95,17 +95,18 @@
     - Features: IOMMU/VT-d enabled, groups separate; firewall disabled
   - **Networks**:
     - vmbr0: nic3, DHCP
-  - **Virtual Machines**:
+- **Virtual Machines**:
     - **OPNsense**:
       - Specs: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, ZFS stripe filesystem, version 25.7.10
       - Machine Type: q35
       - PCI Passthrough: 04:00.0/04:00.1/06:00.0 as ix0/ix1/ix2 (PCIe yes, ROM-Bar no), VirtIO vtnet0/vtnet1 removed
       - Auto-Start: Enabled
-      - Configuration: Wizard completed, domain "tourmaline", DNS 1.1.1.1/8.8.8.8 (override unticked), Unbound enabled with DNSSEC support/harden; admin password set, dashboard up
+      - Configuration: Wizard completed, domain "tourmaline", Unbound enabled with DNSSEC support/harden; admin password set, dashboard up
       - Interfaces:
         - WAN: ix0 direct to NBN UDNI (public IP 180.150.66.156, internet working), MTU 1500, blocks RFC1918/bogon unticked
-        - LAN: ix1 192.168.1.1/24 (ISC DHCP enabled, range default)
-        - OPT1: ix2 192.168.20.1/24 (ISC DHCP enabled, range 192.168.20.10-192.168.20.250, DNS 1.1.1.1/8.8.8.8, gateway 192.168.20.1)
+        - LAN: ix1 192.168.1.1/24 (ISC DHCP enabled, range default, DNS 192.168.1.1)
+        - OPT1: ix2 192.168.20.1/24 (ISC DHCP enabled, range 192.168.20.10-192.168.20.250, DNS 192.168.20.1, gateway 192.168.20.1)
+      - DNS Resolver (Unbound): Recursive mode enabled by default; OISD Big blocklist enabled for network-wide ad and threat blocking; DNS over TLS forwarding to Quad9 (9.9.9.9 port 853, verify CN dns.quad9.net) for non-recursive queries; DNSSEC enabled in General settings; Use System Nameservers unticked
       - Routing: Rules added (LAN to OPT1 pass, OPT1 to LAN pass), ping LAN to OPT1 ok; unplug test completed (Proxmox on OPT1 DHCP 192.168.20.10, ping/GUI/internet working both ways via routing)
       - Security: OPT1 restricted (block OPT1 to LAN rule added/tested ok, LAN access to OPT1 intact); Proxmox host firewall re-enabled and tested ok (ping/GUI/internet access intact); Proxmox management switched to nic3 (spare X540 port), DHCP IP on 192.168.30.x
       - QoS: Configured with FQ_CoDel pipes/queues/rules for LAN/OPT1 using multi-interface method, functional with low jitter/bufferbloat (e.g., jitter <20ms under load, A+ on Waveform)
