@@ -101,7 +101,7 @@
       - Machine Type: q35
       - PCI Passthrough: 04:00.0/04:00.1/06:00.0 as ix0/ix1/ix2 (PCIe yes, ROM-Bar no), VirtIO vtnet0/vtnet1 removed
       - Auto-Start: Enabled
-      - Configuration: Wizard completed, domain "tourmaline", Unbound enabled with DNSSEC support/harden; admin password set, dashboard up
+      - Configuration: domain "tourmaline", Unbound enabled with DNSSEC support/harden; admin password set, dashboard up
       - Interfaces:
         - WAN: ix0 direct to NBN UDNI (public IP 180.150.66.156, internet working), MTU 1500, blocks RFC1918/bogon unticked
         - LAN: ix1 192.168.1.1/24 (ISC DHCP enabled, range default, DNS 192.168.1.1)
