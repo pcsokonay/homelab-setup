@@ -112,7 +112,7 @@
       - QoS: Configured with FQ_CoDel pipes/queues/rules for LAN/OPT1 using multi-interface method, functional with low jitter/bufferbloat (e.g., jitter <20ms under load, A+ on Waveform)
       - Tools: Nano installed for easier editing
       - Backups: Via SFTP to NAS (os-sftp-backup plugin installed, URL sftp://root@truenas-scale.tail9c7840.ts.net//mnt/media/media/backups/OPNsense, key /root/.ssh/id_ed25519_backup, 60 backups, enabled)
-      - Other: Static route to 192.168.30.0/24 via gateway 192.168.20.12 added, ICMP/ping access enabled; port forwards for Jellyfin (80/443 to 192.168.1.10, external access restored, visible WAN rules via Add associated)
+      - Other: Static route to 192.168.30.0/24 via gateway 192.168.20.12 added, ICMP/ping access enabled; port forwards for Jellyfin (80/443 to 192.168.1.10, external access restored, visible WAN rules via Add associated); NAT Port Forward rule for DNS forcing on LAN (TCP/UDP, source LAN net port any, dest !LAN net port 53, redirect to 192.168.1.1 port 53, filter rule association Add associated filter rule, positioned above default allow)
   
   - **Containers**:
     - **external-tester**:
