@@ -33,6 +33,18 @@
   User root
   IdentityFile C:\Users\shodd\.ssh\id_rsa
 
+- **Host opnsense** (Tailscale)
+  Host opnsense
+  HostName opnsense-wan
+  Port 22
+  User root
+    
+- **Host proxmox** (Tailscale)
+  Host proxmox
+  HostName proxmox-wan
+  Port 22
+  User root
+
 ## Notes
 - Pulled from CHOCKSMAINPC ~/.ssh/config.
 - For new hosts, add similar blocks.
