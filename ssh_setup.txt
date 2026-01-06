@@ -5,6 +5,11 @@
 - Key-based auth preferred for security (e.g., ed25519 or rsa keys at C:\Users\shodd\.ssh).
 - Access from CHOCKSMAINPC (downstairs) to devices.
 
+- **SSH Keys**:
+  - C:\Users\shodd\.ssh\id_rsa.pub: Used for Beelink and TrueNAS NAS SSH access.
+  - C:\Users\shodd\.ssh\id_ed25519.pub: Used for Home Assistant SSH access (created 11/DEC/2025).  
+  - /root/.ssh/id_ed25519_backup.pub on OPNsense: ssh-ed25519 AAAAC3NzaC11ZDI1NTE5AAAAICk/wjpFK7W1j9epP/Aw/zRG7FJjYQ+yhaziC/CiD18o opnsense_backup (created 27/DEC/2025 for SFTP backups to NAS).
+
 ## Configurations
 - **Host ha** (Home Assistant):
   Host ha

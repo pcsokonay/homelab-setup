@@ -25,6 +25,7 @@ ISP (NBN Connection - Upstairs Entry Point)
     |               |-- TrueNAS Scale NAS (IP: 192.168.0.8, Storage/Backups, Apps like Bazarr/Tdarr Node)
     |               |-- TP-Link LiteWave LS105GP PoE Switch (Daisy-Chained to keepLiNK, Powering 2 SMLight Devices: one in Zigbee mode, the other as Bluetooth mesh hub)
     |               |-- SLZB-06M Zigbee Coordinator (IP: 192.168.0.12, Connected via TP-Link for Home Assistant)
+    |               |-- chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows, Tailnet IP 100.108.206.83)
     |               |-- Other LAN Devices (e.g., CHOCKSMAINPC, TVs, Phones via WiFi/Ethernet)
     |
     |-- OPT1: ix2 (192.168.20.1/24, DHCP Enabled)

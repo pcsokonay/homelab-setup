@@ -99,7 +99,7 @@
 - **Purpose:**
   - Setup/eval open-source tools for homelab.
 - **Plan:**
-  - Suricata (IDS/IPS); Crontab Guru/Cronitor (job monitoring); Prometheus/Grafana/InfluxDB/Telegraf/Netdata (monitoring); Duplicati (backups); Scanopy (https://github.com/scanopy/scanopy for network visualization and auto-discovery).
+  - Suricata (IDS/IPS); Crontab Guru/Cronitor (job monitoring); Prometheus/Grafana/InfluxDB/Telegraf/Netdata (monitoring); Duplicati (backups); Scanopy (https://github.com/scanopy/scanopy for network visualization and auto-discovery). dockage/portainer (management) 
 - **Status:**
   - Not started.
 

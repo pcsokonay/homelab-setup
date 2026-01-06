@@ -113,8 +113,7 @@
       - Tools: Nano installed for easier editing
       - Backups: Via SFTP to NAS (os-sftp-backup plugin installed, URL sftp://root@truenas-scale.tail9c7840.ts.net//mnt/media/media/backups/OPNsense, key /root/.ssh/id_ed25519_backup, 60 backups, enabled)
       - Other: Static route to 192.168.30.0/24 via gateway 192.168.20.12 added, ICMP/ping access enabled; port forwards for Jellyfin (80/443 to 192.168.1.10, external access restored, visible WAN rules via Add associated); NAT Port Forward rule for DNS forcing on LAN (TCP/UDP, source LAN net port any, dest !LAN net port 53, redirect to 192.168.1.1 port 53, filter rule association Add associated filter rule, positioned above default allow)
-  
-  - **Containers**:
+   - **Containers**:
     - **external-tester**:
       - Type: Alpine CT (lightweight)
       - Purpose: External connectivity testing
@@ -125,8 +124,5 @@
   - **Host Backups**:
     - Via CIFS to NAS: Storage ID truenas-backups, server truenas-scale.tail9c7840.ts.net, share MediaShare, subdir backups/proxmox, user media_user, enabled
     - Scripted: /root/backup-proxmox-host.sh with rsync over SSH key to NAS /proxmox/host, cron daily 4AM
-
-- **SSH Keys**:
-  - C:\Users\shodd\.ssh\id_rsa.pub: Used for Beelink and TrueNAS NAS SSH access.
-  - C:\Users\shodd\.ssh\id_ed25519.pub: Used for Home Assistant SSH access (created 11/DEC/2025).  
-  - /root/.ssh/id_ed25519_backup.pub on OPNsense: ssh-ed25519 AAAAC3NzaC11ZDI1NTE5AAAAICk/wjpFK7W1j9epP/Aw/zRG7FJjYQ+yhaziC/CiD18o opnsense_backup (created 27/DEC/2025 for SFTP backups to NAS).
+- **Client PCs**:
+  - chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows, Tailnet IP 100.108.206.83)
