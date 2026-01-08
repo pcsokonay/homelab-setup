@@ -144,3 +144,11 @@
   - Dynamic bandwidth scripting evaluation pending.
 - **Next:**
   - Dynamic bandwidth scripting eval for QoS, full live.
+
+## Zabbix Monitoring Integration
+- **Purpose:**
+  - Deploy Zabbix for comprehensive homelab monitoring (servers, networks, containers) with dashboards, alerts, and low-resource options for budget setup.
+- **Plan:**
+  - Install server on Beelink Docker or Pi; agents on hosts (e.g., Proxmox, TrueNAS); configure browser GUI for metrics like CPU/net/drives; test scalability for 30+ containers.
+- **Status:**
+  - Not started.
