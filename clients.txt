@@ -2,5 +2,5 @@
 - Pixel 7 Pro (Android 10)
 - Chromecast (Google Cast)
 - **Client PCs**:
-  - chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows, Tailnet IP 100.108.206.83)
+  - chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows with WSL Ubuntu for tools like Flent, Tailnet IP 100.108.206.83)
   - Csokonay: Dad's PC (IP: 192.168.30.3 via Reservation)

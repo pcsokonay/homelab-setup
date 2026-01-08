@@ -79,14 +79,6 @@
 - **Status:**
   - Not started; box of IoT devices pending (switches, etc.).
 
-## QoS Dynamic Bandwidth Scripting
-- **Purpose:**
-  - Automate QoS adjustments for peak hours (e.g., lower to 600-700Mbps down 5pm-midnight for low jitter).
-- **Plan:**
-  - Script FQ_CoDel tweaks based on time/load, test with Waveform.
-- **Status:**
-  - Pending eval; current manual tuning A+ daytime (750/95 or 950), but evening drops.
-
 ## Ethernet Cable Testing
 - **Purpose:**
   - Test spare cables/house run (50-70m) for 2.5G capability using crimp tool, keepLiNK spare port, CHOCKSMAINPC NIC, Proxmox ports.
@@ -119,14 +111,6 @@
 - **Status:**
   - In progress.
 
-## Homelab Docs Cleanup
-- **Purpose:**
-  - Split homelab_setup.txt into overview, NAS details, software stack; consider self-hosting as webpage for live edits/reference.
-- **Plan:**
-  - Restructure files, host on local server (e.g., via Docker/Nextcloud).
-- **Status:**
-  - Not started.
-
 ## Advanced Monitoring Dashboard on Raspberry Pi
 - **Purpose:**
   - Build advanced monitoring dashboard with Prometheus/Grafana/InfluxDB/Telegraf/Netdata, cycle pages on timer/metrics (e.g., Jellyfin watch triggers Homarr focus, spikes rotate to CPU/net views); organize growing Docker services and centralize notifications/monitoring for easier management and learning.
@@ -134,16 +118,6 @@
   - Use Pi for dedicated TV display (independent of PC); integrate with existing apps for overview (e.g., stalled alerts, drive risks); keep PC for Wallpaper Engine when wanted.
 - **Status:**
   - In progress.
-
-## Proxmox WAN Entry Setup
-- **Purpose:**
-  - Firewall/router with QoS at NBN entry (upstairs), on old PC as Proxmox hypervisor for scalability/learning.
-- **Plan:**
-  - Passthrough NICs to OPNsense VM for negligible overhead, configure QoS (FQ_CODEL/CAKE), prioritize downstairs (Tenda 192.168.0.x), repurpose NF18 upstairs LAN.
-- **Status:**
-  - Dynamic bandwidth scripting evaluation pending.
-- **Next:**
-  - Dynamic bandwidth scripting eval for QoS, full live.
 
 ## Zabbix Monitoring Integration
 - **Purpose:**
