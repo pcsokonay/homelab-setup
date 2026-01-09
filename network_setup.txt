@@ -130,3 +130,5 @@
     - Scripted: /root/backup-proxmox-host.sh with rsync over SSH key to NAS /proxmox/host, cron daily 4AM
 - **Client PCs**:
   - chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows, Tailnet IP 100.108.206.83)
+
+

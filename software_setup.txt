@@ -4,14 +4,13 @@
     - Ubuntu Server 24.04.3 LTS (Beelink N150, installed, deferred updates installed for openssh/coreutils; timezone Australia/Sydney, HWE kernel installed for i915 support)
   - **Scripts**:
     - /cache/downloads/qb_complete_copy.sh: Auto-copies completed torrents to staging/NAS
-    - /usr/local/bin/striptracks.sh: Used to run striptracks on entire media library
+    - /usr/local/bin/striptracks_batch.sh: Used to run striptracks on entire media library
     - ~/docker-homelab/SABnzbd/config/scripts/sab_combined.sh: Runs striptracks on media downloaded through SABnzbd
     - ~/docker-homelab/wait-for-nas.sh: Ensures that the NAS is correctly mounted after boot (avoids boot race issues)
     - ~/docker-homelab/qb_port_sync.sh: Syncs the vpn port with qbittorrent every 5 minutes for port forwarding
     - ~/docker-homelab/stack-health-check.sh: Monitors stack health via escalating curls on Radarr/Sonarr/qBittorrent ports; restarts compose on failure and loops until success (30s sleep, reduced logging to issues only; infinite retries; tested and live) 
       - Logs: To /var/log/stack-health.log
       - Service: Turned into a system service at /etc/systemd/system/stack-health.service
-    - ~/docker-homelab/rebuild.sh: Bash script to rebuild a single Docker service with latest image (pull, down, build --no-cache, up -d); usage ./rebuild.sh <service_name>
   - **Crontab**:
     - */5 * * * * /home/chocks/docker-homelab/qb_port_sync.sh
     - 0 3 * * * /home/chocks/docker-homelab/jellyfin_backup.sh
@@ -272,4 +271,29 @@
     - VNC: Enabled with password, port auto (e.g., 5900)
     - Boot Method: UEFI
     - Status: Installed and onboarded with basic setup; dashboard accessible at http://192.168.0.2:8123; stable at low resources (0% CPU idle, 0.6GB RAM); Advanced SSH & Web Terminal add-on configured with key-based access via username 'chocks' on port 22222 from CHOCKSMAINPC; Zigbee2MQTT add-on installed and connected to SLZB-06M coordinator (IP 192.168.0.12, port 6638, adapter ember, firmware OS v3.1.3, Zigbee 20250220); network formed and ready for device pairing.
-	
+Cloud Endpoints Setup:
+- **Netserver Service (Ubuntu systemd unit)**:
+  [Unit]
+  Description=Netperf Server
+  After=network.target
+
+  [Service]
+  ExecStart=/usr/bin/netserver -4 -L 0.0.0.0 -p 12865 -D
+  Restart=always
+  User=root
+
+  [Install]
+  WantedBy=multi-user.target
+
+  Commands: sudo systemctl daemon-reload; sudo systemctl enable --now netserver.service
+
+- **Iptables Rules for Netserver (Ubuntu with netfilter-persistent)**:
+  - Install: sudo apt install -y netfilter-persistent iptables-persistent
+  - Remove default REJECT: sudo iptables -D INPUT <line_number> (e.g., 5)
+  - Add allows (insert before end/REJECT):
+    sudo iptables -I INPUT <line> -m state --state NEW -p tcp --dport 12865 -j ACCEPT
+    sudo iptables -I INPUT <line+1> -m state --state NEW -p tcp --dport 1024:65535 -j ACCEPT
+    sudo iptables -I INPUT <line+2> -m state --state NEW -p udp --dport 1024:65535 -j ACCEPT
+  - Optional: Add final REJECT: sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
+  - Save: sudo netfilter-persistent save
+  - Verify: sudo iptables -L INPUT -n -v --line-numbers	
