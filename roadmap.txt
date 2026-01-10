@@ -75,7 +75,7 @@
 - **Purpose:**
   - Replace/improve downstairs networking with Flint2 (GL.iNet?), learn VLANs for Home Assistant/IoT isolation.
 - **Plan:**
-  - Integrate with OPNsense, setup VLAN for HA, sign up Nabu Casa, local Tuya control, voice assist no-cloud.
+  - Integrate with OPNsense, setup VLAN for HA and for audio streaming, sign up Nabu Casa, local Tuya (or Tuya local - I forgot which one the newer better one is) control and move all IOT devices to purely HA managed with no other software required, voice assist no-cloud.
 - **Status:**
   - Not started; box of IoT devices pending (switches, etc.).
 
