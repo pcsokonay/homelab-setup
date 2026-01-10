@@ -59,3 +59,4 @@ Cloud Testing Server:
 - **Home Assistant:** VM on TrueNAS (IP: 192.168.0.2 via downstairs LAN), connected to SLZB-06M Zigbee (192.168.0.12).
 - **Ethernet Run Note:** The connection between OPNsense OPT1 (ix2) and Tenda MX12 is approximately 100m with two plugs. This run needs testing for 2.5G capability to assess 2G internet upgrade viability. Due to shortage of 2.5G ports upstairs, consider migrating Proxmox management from ix3/nic3 to the onboard 1G Ethernet port (Intel 82579V) to free ix3 for direct connection to CHOCKSMAINPC's 2.5G onboard NIC for testing.
 - **Bufferbloat Testing:** Conducted using Flent RRUL/RRUL_BE with GCP VM netserver; no bloat observed (flat 5-6.5ms pings under 900/90Mbps load, peaks <10ms even in evening peak hours). FQ_CoDel pipes tuned to 950Mbps down/95Mbps up for A+ performance.
+
