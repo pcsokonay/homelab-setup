@@ -126,3 +126,17 @@
   - Install server on Beelink Docker or Pi; agents on hosts (e.g., Proxmox, TrueNAS); configure browser GUI for metrics like CPU/net/drives; test scalability for 30+ containers.
 - **Status:**
   - Not started.
+
+## Local CLI AI Assistant (GPU-Accelerated)
+- **Purpose:**
+  - Natural-language CLI interface for system tasks, file/Docker generation, homelab maintenance.
+  - Leverage chocksmainpc GTX 4090 for fast inference.
+  - Context-aware in local or SSH sessions (e.g., Beelink).
+  - Synergistic with Grok for planning.
+- **Plan:**
+  - Central Ollama on chocksmainpc (Windows, CUDA).
+  - Open Interpreter as CLI agent (local + remote thin clients over Tailscale).
+  - Start with llama3.1:70b or equivalent for reasoning/Docker knowledge.
+  - Secure API via Tailscale only.
+- **Status:**
+  - Not started.
