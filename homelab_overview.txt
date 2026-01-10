@@ -46,8 +46,8 @@ Cloud Testing Server:
   - Purpose: Bufferbloat testing with Flent RRUL/RRUL_BE (netserver on port 12865, iperf UDP listener)
   - Crontab: @reboot /usr/bin/netserver -4 -L 0.0.0.0 -p 12865 -D (starts on boot)
 - Oracle Cloud VM (IP: 152.67.127.81, Region: Sydney, Shape: VM.Standard.E2.1.Micro, OS: Ubuntu)
-  - Purpose: Secondary bufferbloat testing endpoint (netserver on port 12865); limited to ~50 Mbps symmetric internet bandwidth, sufficient for basic/low-speed validation but not full ~900/90 Mbps ISP testing. Useful for other low-bandwidth tests.
-  - Setup: Internet Gateway (vcn-20260107-1616), route table rule for 0.0.0.0/0 to IGW, security list egress all protocols to 0.0.0.0/0 and ingress TCP 12865 + ephemerals; netperf installed via apt, systemd service for boot, iptables rules for host firewall.
+  - Purpose: Secondary bufferbloat testing endpoint (netserver on port 12865); limited to ~50 Mbps symmetric internet bandwidth, sufficient for basic/low-speed validation or other tests but not full ~900/90 Mbps ISP testing.
+  - Setup: Internet Gateway (vcn-20260107-1616), route table rule for 0.0.0.0/0 to IGW, security list egress all protocols to 0.0.0.0/0 and ingress TCP 12865 + ephemerals 1024-65535; netperf installed via apt, systemd service for boot, iptables rules for host firewall (allows from homelab IP 180.150.66.156).
 
 **Key Explanations:**
 - **Entry Point:** ISP NBN connects directly to OPNsense WAN (ix0 on the Proxmox-hosted VM), which handles firewall, routing, and QoS (FQ_CoDel configured for low jitter/bufferbloat).
