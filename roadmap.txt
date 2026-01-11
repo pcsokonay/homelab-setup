@@ -127,16 +127,3 @@
 - **Status:**
   - Not started.
 
-## Local CLI AI Assistant (GPU-Accelerated)
-- **Purpose:**
-  - Natural-language CLI interface for system tasks, file/Docker generation, homelab maintenance.
-  - Leverage chocksmainpc GTX 4090 for fast inference.
-  - Context-aware in local or SSH sessions (e.g., Beelink).
-  - Synergistic with Grok for planning.
-- **Plan:**
-  - Central Ollama on chocksmainpc (Windows, CUDA).
-  - Open Interpreter as CLI agent (local + remote thin clients over Tailscale).
-  - Start with llama3.1:70b or equivalent for reasoning/Docker knowledge.
-  - Secure API via Tailscale only.
-- **Status:**
-  - In progress.

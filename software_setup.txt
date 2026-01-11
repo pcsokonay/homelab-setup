@@ -298,3 +298,15 @@ Cloud Endpoints Setup:
   - Add final REJECT: sudo iptables -A INPUT -j REJECT --reject-with icmp-host-prohibited
   - Save: sudo netfilter-persistent save
   - Verify: sudo iptables -L INPUT -n -v --line-numbers (shows pkts/bytes counters for hits; reset with sudo iptables -Z)
+
+  ## Local CLI AI Assistant (GPU-Accelerated)
+- **Central Server (chocksmainpc Windows)**:
+  - Ollama: Native Windows app (v0.13.x+), CUDA-enabled for GTX 4090.
+  - Models: gemma3:27b (primary, 128K context), llama3.1:70b (heavy), llama3.2:3b (light).
+  - API: Exposed on 0.0.0.0:11434 with /v1 OpenAI compat endpoint (Tailscale-secured).
+  - Run: Tray app on startup.
+- **CLI Agent (Open Interpreter v0.4.x)**:
+  - Local (Windows): Python 3.12.10; launch via batch interpreter --safe_mode ask --model ollama/gemma3:27b --context_window 131072.
+  - Remote Thin Client (Beelink Ubuntu): Virtualenv ~/oi_env; alias localai sources venv + interpreter --safe_mode ask --model gemma3:27b --api_base http://100.108.206.83:11434/v1 --context_window 131072.
+- **Purpose**: Natural-language interface for homelab tasks (Docker Compose generation/editing, file ops, system queries) with full shell context + 4090 inference speed.
+- **Notes**: safe_mode ask for manual code approval; ignore semgrep/xdg-open errors (headless/server-normal); large context handles full compose files.
