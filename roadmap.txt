@@ -139,4 +139,4 @@
   - Start with llama3.1:70b or equivalent for reasoning/Docker knowledge.
   - Secure API via Tailscale only.
 - **Status:**
-  - Not started.
+  - In progress.
