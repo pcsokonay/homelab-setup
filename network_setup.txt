@@ -85,16 +85,17 @@
     - RAM: 16GB
     - PSU: 950W (water-cooled)
     - NICs:
-      - Silicom Quad Port 10GB PCIe RJ45 X540-T4 (04:00.0 nic0 ix0, 04:00.1 nic1 ix1, 06:00.0 nic2 ix2, 06:00.1 nic3)
-      - Onboard Intel 82579V Gigabit (00:19.0 eno1)
+      - Silicom Quad Port 10GB PCIe RJ45 X540-T4 (nic0 WAN physical, nic1 LAN physical, nic2 OPT1 physical, nic3 spare for roadmap cable testing)
+      - Onboard Intel 82579V Gigabit (eno1 management to NF18 LAN)
   - **Software**:
     - Version: Proxmox VE 9.1.1
-    - Filesystem: ext4 on 500GB SSD
-    - Management IP: DHCP 192.168.30.14/24 from NF18 LAN (auto-renews ~10 min)
-    - Hostname: proxmox-wan.local
-    - Features: IOMMU/VT-d enabled, groups separate; firewall disabled
-  - **Networks**:
-    - vmbr0: nic3, DHCP
+    - Bootloader: GRUB (params in /etc/default/grub + update-grub; previous IOMMU issues resolved by switching to virtual networking—no passthrough)
+  - **Networks** (virtual bridges, VirtIO for OPNsense reliability/scalability):
+    - vmbr0: manual, bridge-ports nic0 (WAN physical path to NTD UNI-D 1)
+    - vmbr1: manual, bridge-ports nic1 (LAN physical path to downstairs clients/Tenda)
+    - vmbr2: manual, bridge-ports nic2 (OPT1 physical path to NF18 WAN)
+    - vmbr3: dhcp, bridge-ports eno1 (management DHCP from NF18 upstairs 192.168.30.x subnet)
+    - nic3: Fully spare (no bridge/VM use—for roadmap Ethernet cable testing)
 - **Virtual Machines**:
     - **OPNsense**:
       - Specs: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, ZFS stripe filesystem, version 25.7.10

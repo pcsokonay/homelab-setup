@@ -71,13 +71,14 @@
 - **Status:**
   - Not started.
 
+# Updated roadmap.txt Flint2 item (replace the Flint2 section)
 ## Flint2 Router Downstairs
 - **Purpose:**
   - Replace/improve downstairs networking with Flint2 (GL.iNet?), learn VLANs for Home Assistant/IoT isolation.
 - **Plan:**
   - Integrate with OPNsense, setup VLAN for HA and for audio streaming, sign up Nabu Casa, local Tuya (or Tuya local - I forgot which one the newer better one is) control and move all IOT devices to purely HA managed with no other software required, voice assist no-cloud.
 - **Status:**
-  - Not started; box of IoT devices pending (switches, etc.).
+  - In progress (LAN subnet changed to 192.168.0.1/24 as preparation for flatten/migration).
 
 ## Ethernet Cable Testing
 - **Purpose:**
