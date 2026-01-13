@@ -1,18 +1,23 @@
 - **Local Server IP**:
-- 192.168.0.9 (Beelink N150, static on enp1s0, systemd-resolved DNS 192.168.1.1)
+  - 192.168.0.9 (Beelink N150, static)
 - **NAS IP**:
   - 192.168.0.8 (TrueNAS Scale, static)
 - **Local Network**:
-  - 192.168.0.x subnet (192.168.20.1 for Sonarr/Prowlarr/Radarr local access)
+  - Primary LAN: 192.168.0.0/24 (direct from OPNsense vtnet1)
+  - Upstairs isolated: 192.168.20.0/24 (OPT1) → 192.168.30.0/24 (NF18Mesh)
 - **Public IP**:
-  - 180.150.66.156 (dynamic, Aussie Broadband, rarely changes)
-- **Port Forwarding**:
-  - **OPNsense**:
-    - WAN TCP any to WAN address port 443 redirect to 192.168.1.10 port 443 (HTTPS to Tenda, filter Add associated, visible WAN rule, external Jellyfin access restored)
-    - WAN TCP any to WAN address port 80 redirect to 192.168.1.10 port 80 (HTTP to Tenda, filter Add associated, visible WAN rule)
-  - **Tenda MX12 Mesh**:
-    - 443 -> 192.168.0.9:443 (Caddy on Beelink)
-    - 80 -> 192.168.0.9:80 (Caddy on Beelink)
+  - 180.150.66.156
+- **Port Forwarding** (Direct on OPNsense WAN):
+  - TCP 80/443 → 192.168.0.9:80/443 (Caddy/Jellyfin external access)
+- **DHCP**:
+  - Centralized on OPNsense LAN (vtnet1): Range 192.168.0.50-192.168.0.250
+  - DNS servers: 192.168.0.1 (primary, Unbound with OISD Big + Quad9 DoT)
+- **Tenda MX12 Mesh**:
+  - Mode: Access Point only (WiFi SSID "INFINITE AURA" 2.4GHz channel 11, password Awkward88!!!)
+  - No routing/DHCP/NAT/firewall
+  - Uplink to keepLiNK switch
+- **keepLiNK Switch**:
+  - Core downstairs switch, trunks/bonds unchanged
 - **Router**:
     - Tenda MX12 Mesh (hosts 192.168.0.x LAN, connected to Netcomm NF18Mesh for WAN, WAN from OPNsense ix1, WAN DNS 192.168.1.1)
 - **Modem**:

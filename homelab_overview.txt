@@ -1,41 +1,43 @@
 ## Network Setup
 #### Network Topology
 
-This section provides an overview of the current network structure based on the completed setups. I've used a hierarchical text-based diagram for clarity, followed by explanations. This reflects the actual implemented components, connections, and IPs.
-
 **High-Level Topology Diagram (Text-Based):**
 
 ISP (NBN Connection - Upstairs Entry Point)
 |
 |-- OPNsense (Firewall/Router VM on Proxmox WAN PC)
     |
-    |-- WAN: ix0 (Direct to NBN UDNI, Public IP: 180.150.66.156)
+    |-- WAN: vtnet0 (Direct to NBN UNI-D, Public IP: 180.150.66.156)
     |
-    |-- LAN: ix1 (192.168.1.1/24, DHCP Enabled)
+    |-- LAN: vtnet1 (192.168.0.1/24, DHCP Enabled, range 192.168.0.50-192.168.0.250)
     |   |
-    |   |-- Tenda MX12 Mesh (WAN: 192.168.1.10)
-    |       |
-    |       |-- Downstairs LAN: 192.168.0.x (Hosts Main Devices/Services)
-    |           |
-    |           |-- keepLiNK KP-9000-9XHML-X Switch (IP: 192.168.0.10, Core Switch)
-    |               |
-    |               |-- Beelink N150 Mini PC (IP: 192.168.0.9, Docker Host for Jellyfin, *arr Apps, qBittorrent, etc.)
-    |               |-- TrueNAS Scale NAS (IP: 192.168.0.8, Storage/Backups, Apps like Bazarr/Tdarr Node)
-    |               |-- TP-Link LiteWave LS105GP PoE Switch (Daisy-Chained to keepLiNK, Powering 2 SMLight Devices: one in Zigbee mode, the other as Bluetooth mesh hub)
-    |               |-- SLZB-06M Zigbee Coordinator (IP: 192.168.0.12, Connected via TP-Link for Home Assistant)
-    |               |-- chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows, Tailnet IP 100.108.206.83)
-    |               |-- Other LAN Devices (e.g., CHOCKSMAINPC, TVs, Phones via WiFi/Ethernet)
+    |   |-- keepLiNK KP-9000-9XHML-X Switch (IP: 192.168.0.10, Core Switch)
+    |   |   |
+    |   |   |-- Beelink N150 Mini PC (IP: 192.168.0.9, Docker Host)
+    |   |   |-- TrueNAS Scale NAS (IP: 192.168.0.8, Storage/Apps)
+    |   |   |-- TP-Link LiteWave LS105GP PoE Switch (Daisy-Chained, Powering SLZB-06M Zigbee .12 and Bluetooth hub)
+    |   |   |-- Tenda MX12 Mesh (AP mode only, WiFi SSID "INFINITE AURA", no DHCP/routing)
+    |   |   |-- Other devices (PCs, TVs, phones, IoT via WiFi/Ethernet)
     |
-    |-- OPT1: ix2 (192.168.20.1/24, DHCP Enabled)
+    |-- OPT1: vtnet2 (192.168.20.1/24, DHCP Enabled)
         |
-        |-- Netcomm NF18Mesh Modem (WAN: 192.168.20.12, Mode: Double NAT with LAN 192.168.30.1/24)
+        |-- Netcomm NF18Mesh Modem (WAN: 192.168.20.12, Double NAT LAN 192.168.30.1/24)
             |
-            |-- Upstairs LAN: 192.168.30.x (DHCP 192.168.30.10-250)
+            |-- Upstairs LAN: 192.168.30.x
                 |
-                |-- Proxmox WAN PC Management (vmbr0 on nic3, DHCP IP: 192.168.30.14)
-                |-- Dad's PC (IP: 192.168.30.3 via Reservation)
-                |-- External-Tester (Alpine CT on Proxmox for Connectivity Testing)
-                |-- Other Upstairs Devices (e.g., Google TV for Jellyfin Casting, Parents' Phones)
+                |-- Proxmox WAN PC Management (DHCP 192.168.30.14)
+                |-- Dad's PC (192.168.30.3 reserved)
+                |-- Other upstairs devices
+
+Overlay: Tailscale on key devices for remote access.
+
+**Key Changes (Post-Power-Outage Migration - Jan 2026):**
+- Eliminated double NAT on downstairs network.
+- OPNsense LAN now directly routes 192.168.0.0/24 (vtnet1).
+- Tenda MX12 demoted to pure Access Point mode (WiFi only, no routing/DHCP/NAT).
+- Port forwards simplified: direct from OPNsense WAN to Beelink 192.168.0.9.
+- DHCP centralized on OPNsense LAN interface (DNS pushed 192.168.0.1 for Unbound blocklists).
+- All static/reserved IPs preserved.
 
 Overlay Networks:
 - Tailscale (Mesh VPN for Remote Access - On Beelink, CHOCKSMAINPC, Phone, Proxmox WAN PC/OPNsense)
