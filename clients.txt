@@ -1,6 +1,13 @@
 ## Clients
-- Pixel 7 Pro (Android 10)
-- Chromecast (Google Cast)
-- **Client PCs**:
-  - chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows with WSL Ubuntu for tools like Flent, Tailnet IP 100.108.206.83)
-  - Csokonay: Dad's PC (IP: 192.168.30.3 via Reservation)
+- Pixel 7 Pro (Android 10, dynamic)
+- Chromecast (Google Cast, dynamic)
+- chocksmainpc: 192.168.0.7 (dynamic with Dnsmasq reservation, Windows with WSL Ubuntu, Tailnet IP 100.108.206.83)
+- Csokonay: Dad's PC (192.168.30.3 reserved on NF18Mesh)
+- Beelink N150: 192.168.0.9 (static, Docker host)
+- TrueNAS Scale NAS: 192.168.0.8 (static with Dnsmasq reservation)
+- Home Assistant VM: 192.168.0.2 (dynamic with Dnsmasq reservation)
+- SLZB-06M Zigbee Coordinator: 192.168.0.12 (dynamic, MAC 0C:DC:7E:36:E5:D7, renew via reboot/delete lease)
+- Proxmox WAN PC: 192.168.30.14 (DHCP from NF18Mesh, Tailnet IP 100.112.76.14)
+- Cloud Testing Servers:
+  - GCP VM: 35.189.61.183 (australia-southeast1, e2-medium, netserver port 12865 for bufferbloat)
+  - Oracle Cloud VM: 152.67.127.81 (Sydney, VM.Standard.E2.1.Micro, Ubuntu, netserver port 12865 for bufferbloat)
