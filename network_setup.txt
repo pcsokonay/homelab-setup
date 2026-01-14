@@ -112,14 +112,20 @@
       - Networks: VirtIO (vtnet0 WAN, vtnet1 LAN, vtnet2 OPT1, tailscale plugin assigned as OPT2 "TAIL" with lock to prevent removal)
       - Auto-Start: Enabled
       - Interfaces:
-        - WAN (vtnet0): DHCP public IP (180.150.66.x range, Aussie Broadband FTTP—solid green UNI-D 1 gigabit)
-        - LAN (vtnet1): Static 192.168.0.1/24 (ISC DHCP enabled, range 192.168.0.50-192.168.0.250; prepares for Flint 2 migration/flatten)
-        - OPT1 (vtnet2): Static 192.168.20.1/24 (ISC DHCP enabled, range 192.168.20.10-192.168.20.250—upstairs isolated subnet intact via NF18)
+        - WAN (vtnet0): DHCP public IP (180.150.66.x range, Aussie Broadband FTTP—UNI-D 1 gigabit)
+        - LAN (vtnet1): Static 192.168.0.1/24 
+        - OPT1 (vtnet2): Static 192.168.20.1/24 (upstairs isolated subnet intact via NF18)
         - TAIL (OPT2): Tailscale plugin interface (enabled/locked to prevent removal; firewall rules on TAIL interface: pass inbound TCP from any to This Firewall ports 8443 (custom GUI) + 22 (SSH); remote GUI/SSH fully functional via Tailscale IPs/hostname with self-signed cert exception)
       - Notes: Switched from PCI passthrough to VirtIO bridges for reliability (post-IOMMU/kernel issues); near-native 1G performance; anti-lockout enabled; Tailscale remote GUI/SSH via firewall rules on TAIL interface
-      - DNS Resolver (Unbound): Recursive mode enabled by default; OISD Big blocklist enabled for network-wide ad and threat blocking; DNS over TLS forwarding to Quad9 (9.9.9.9 port 853, verify CN dns.quad9.net) for non-recursive queries; DNSSEC enabled in General settings; Use System Nameservers unticked
-      - Routing: Rules added (LAN to OPT1 pass, OPT1 to LAN pass), ping LAN to OPT1 ok; unplug test completed (Proxmox on OPT1 DHCP 192.168.20.10, ping/GUI/internet working both ways via routing)
-      - Security: OPT1 restricted (block OPT1 to LAN rule added/tested ok, LAN access to OPT1 intact); Proxmox host firewall re-enabled and tested ok (ping/GUI/internet access intact); Proxmox management switched to nic3 (spare X540 port), DHCP IP on 192.168.30.14
+      - **DHCP**: Migrated to Dnsmasq (recommended backend for small/medium setups; integrates DHCP with local DNS registration). Enabled on LAN (vtnet1) and OPT1 (vtnet2). 
+        - General: Domain "tourmaline.lan"; Listen port 53053 (avoids conflict); DHCP FQDN enabled; Interfaces: LAN + OPT1 selected; Strict binding enabled; DHCP firewall rules auto-registered.
+        - Ranges: 
+          - LAN: 192.168.0.50 to 192.168.0.250 (domain tourmaline.lan)
+          - OPT1: 192.168.20.10 to 192.168.20.250 (domain tourmaline.lan)
+        - Static mappings: Added for critical devices (e.g., TrueNAS 192.168.0.8, Home Assistant 192.168.0.2) via Hosts tab (MAC-based reservations with hostnames).
+        - Connector mode with Unbound: Unbound forwards local queries to Dnsmasq for auto hostname resolution from leases/statics.
+      - **DNS Resolver (Unbound)**: Primary client-facing resolver (port 53). Features preserved: OISD blocklist, Quad9 DoT forwarding, DNSSEC validation, NAT redirects forcing DNS to router IP. Query Forwarding added: tourmaline.lan + reverse zones (0.168.192.in-addr.arpa, 20.168.192.in-addr.arpa) to 127.0.0.1:53053. "Register DHCP leases/static mappings" unchecked (handled by Dnsmasq now).
+      - Security: OPT1 restricted (block OPT1 to LAN rule added/tested ok, LAN access to OPT1 intact); Proxmox host firewall re-enabled and tested ok (ping/GUI/internet access intact); Proxmox management switched to nic3 (spare X540 port), 
       - Tools: Nano installed for easier editing
       - Backups: Via SFTP to NAS (os-sftp-backup plugin installed, URL sftp://root@truenas-scale.tail9c7840.ts.net//mnt/media/media/backups/OPNsense, key /root/.ssh/id_ed25519_backup, 60 backups, enabled)
       - QoS: Configured with FQ_CoDel pipes/queues/rules for LAN/OPT1 using multi-interface method, functional with low jitter/bufferbloat (e.g., jitter <20ms under load, A+ on Waveform). Pipes tuned to 940Mbps down/94Mbps up after reserving 10/1Mbit for control plane. Control plane shaping enabled for stability under congestion:
@@ -140,6 +146,6 @@
     - Via CIFS to NAS: Storage ID truenas-backups, server truenas-scale.tail9c7840.ts.net, share MediaShare, subdir backups/proxmox, user media_user, enabled
     - Scripted: /root/backup-proxmox-host.sh with rsync over SSH key to NAS /proxmox/host, cron daily 4AM
 - **Client PCs**:
-  - chocksmainpc: 192.168.0.7 (DHCP from Tenda 192.168.0.x subnet, Windows, Tailnet IP 100.108.206.83)
+  - chocksmainpc: 192.168.0.7 (Windows, Tailnet IP 100.108.206.83)
 
 
