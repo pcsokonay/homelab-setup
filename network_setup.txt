@@ -81,6 +81,20 @@
   - radarr.csokonay.online -> 180.150.66.156 (A record; cert valid via Let's Encrypt until ~Feb 2026)
   - media.csokonay.online -> 180.150.66.156 (A record, for Caddy testing without DuckDNS)
   - shoddy88.duckdns.org (static response)
+- **GL.iNet GL-MT6000 (Flint 2) Downstairs AP**:
+  - Mode: Dumb AP (OpenWrt 23.05+ custom build, pure L2 bridge—no routing/DHCP/NAT/firewall)
+  - Management IP: Static 192.168.0.254/24 (gateway/DNS 192.168.0.1 for AP updates/NTP)
+  - Uplink: LAN port to keepLiNK switch (replaces Tenda MX12)
+  - WiFi Configuration:
+    - Dual-band same SSID for seamless band steering
+    - SSID: "INFINITE AURA" (exact caps/spaces)
+    - Encryption: WPA2-PSK
+    - Key: Awkward88!!! (exact)
+    - 2.4GHz (radio0): Channel 11, 20 MHz width (legacy/IoT compatibility, matches old Tenda for Chromecast Audio)
+    - 5GHz (radio1): Channel auto, 80 MHz width (WiFi 6 speed boost for modern devices)
+  - Country Code: AU (full legal power/channels)
+  - Firewall: Transparent (lan zone forward reject, no wan zone)
+  - IPv6: Disabled (delegation off—handled centrally by OPNsense when enabled)  
 - **Firewall**:
   - **BEELINK**:
     - UFW: Active

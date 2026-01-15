@@ -15,7 +15,7 @@ ISP (NBN Connection - Upstairs Entry Point)
     |   |   |-- Beelink N150 Mini PC (IP: 192.168.0.9, Docker Host)
     |   |   |-- TrueNAS Scale NAS (IP: 192.168.0.8, Storage/Apps)
     |   |   |-- TP-Link LiteWave LS105GP PoE Switch (Daisy-Chained, Powering SLZB-06M Zigbee .12 and Bluetooth hub)
-    |   |   |-- Tenda MX12 Mesh (AP mode only, WiFi SSID "INFINITE AURA", no DHCP/routing)
+    |   |   |-- GL.iNet GL-MT6000 (Flint 2) (Downstairs AP, management IP 192.168.0.254, dual-band WiFi SSID "INFINITE AURA")
     |   |   |-- Other devices (PCs, TVs, phones, IoT via WiFi/Ethernet)
     |
     |-- OPT1: vtnet2 (192.168.20.1/24, Dnsmasq DHCP Enabled)
@@ -32,7 +32,7 @@ Overlay: Tailscale on key devices for remote access.
 
 **Key Explanations:**
 - Entry Point: ISP NBN connects directly to OPNsense WAN (vtnet0 on the Proxmox-hosted VM), which handles firewall, routing, and QoS (FQ_CoDel configured for low jitter/bufferbloat).
-- Downstairs Network (Main LAN): OPNsense LAN (vtnet1) directly routes 192.168.0.0/24. The keepLiNK switch acts as the core, connecting Beelink (server for media/Docker services), TrueNAS (NAS storage), and other devices. TP-Link PoE switch is daisy-chained to keepLiNK and powering 2 SMLight devices (SLZB-06M in Zigbee mode, one as Bluetooth mesh hub).
+- Downstairs Network (Main LAN): OPNsense LAN (vtnet1) directly routes 192.168.0.0/24. The keepLiNK switch acts as the core, connecting Beelink (server for media/Docker services), TrueNAS (NAS storage), Flint 2 (downstairs dual-band dumb AP replacement), and other devices. TP-Link PoE switch is daisy-chained to keepLiNK and powering 2 SMLight devices (SLZB-06M in Zigbee mode, one as Bluetooth mesh hub).
 - Upstairs Network: OPNsense OPT1 (vtnet2) provides WAN to NF18Mesh (in double NAT mode with its own 192.168.30.x LAN). This isolates upstairs devices, including Proxmox management access (via DHCP on vmbr3/eno1), dad's PC, and parents' phones.
 - Proxmox WAN PC: Hosts OPNsense VM with VirtIO bridges. Management is via upstairs NF18 LAN (192.168.30.14), with Tailscale for remote stability.
 - Security/Access: Port forwards on OPNsense (80/443 to Beelink 192.168.0.9 for Caddy). UFW on Beelink allows specific ports. Tailscale overlays for secure remote access.
