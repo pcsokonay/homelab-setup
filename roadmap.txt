@@ -1,120 +1,55 @@
-# Home Server Roadmap - Generated 04/JAN/2026 12:00 AEDT
+# Home Server Roadmap - Updated January 16, 2026
 
 ## Notes
-- **Planned immediate next steps in order**:
+- Planned immediate next steps in order:
   1. Dashboard
-  2. tbd
+  2. Explore upstairs IPv6 extension (after further learning)
 
-- Use open-source, cost-effective solutions (Ubuntu, TrueNAS, OpenWRT, OPNsense).
+- Prioritise open-source, cost-effective solutions.
 
 ## Explore *arr Apps
-- **Purpose:**
-  - Add media automation (music, eBooks, comics, transcoding, indexers).
-- **Plan:**
-  - Evaluate Lidarr (music).
-  - Evaluate Readarr (eBooks).
-  - Evaluate Mylar3 (comics).
-  - Install via Docker.
-  - Integrate with Prowlarr/qBittorrent/Jellyfin.
-  - Add Jellyseerr for requests/discovery (pending evaluation).
-  - Bazarr for subtitles (focus on forced subs for mixed-language content, e.g., non-English in English movies).
-  - theme.park for UI themes (pending/low-priority).
-- **Status:**
-  - Pending more indexers/evaluation, plus Jellyseerr/theme.park.
+- Evaluate Lidarr (music), Readarr (eBooks), Mylar3 (comics)
+- Jellyseerr for requests/discovery
+- Bazarr for subtitles (focus on forced subs)
+- theme.park for UI themes (low priority)
+- Status: Not started
 
 ## Integrate Snapcast
-- **Purpose:**
-  - Synchronous multiroom audio playback, extending Jellyfin for Sonos-like audio distribution.
-- **Plan:**
-  - Install Snapserver on home server.
-  - Configure Jellyfin audio output to Snapserver's fifo (/tmp/snapfifo).
-  - Set up Snapclients on devices.
-  - Use codecs like FLAC/Opus for low-latency sync.
-- **Status:**
-  - Not started.
-  - Requires server/client setup and Jellyfin integration.
+- Synchronous multiroom audio extending Jellyfin
+- Status: Not started
 
 ## Explore Tdarr for AV1 Transcoding
-- **Purpose:**
-  - Transcoding for library compression to save space.
-- **Plan:**
-  - Explore AV1 transcoding.
-- **Status:**
-  - Not started.
+- Library compression to save space
+- Status: Not started
 
 ## Explore Forking Radarr
-- **Purpose:**
-  - Bucket-list learning project to fork Radarr (C#/.NET) for custom features like revived Drone Factory.
-- **Plan:**
-  - Start with VS Code setup.
-  - GitHub clone.
-  - Contribute open-source.
-- **Status:**
-  - Not started.
-  - Post-setup learning project.
+- Learning project for custom features (e.g., revived Drone Factory)
+- Status: Not started
 
 ## Self-Host Monero Node
-- **Purpose:**
-  - Run a full Monero node for local wallet syncing (e.g., Cake Wallet) and network contribution, emphasizing privacy against suppression.
-- **Plan:**
-  - Monitor resources/bandwidth ongoing.
-  - Resync to full node to support monero project.
-  - Add --restricted-rpc and SSL for remote sync.
-- **Status:**
-  - Not started.
-
-## IPv6 Exploration
-- **Purpose:**
-  - Learn/setup IPv6 for potential speed gains, NAT simplification; cautious due to past hack concern.
-- **Plan:**
-  - Research official docs, test in isolated setup, monitor security.
-- **Status:**
-  - Not started.
+- Full node for privacy/wallet syncing
+- Status: Not started
 
 ## Ethernet Cable Testing
-- **Purpose:**
-  - Test spare cables/house run (50-70m) for 2.5G capability using crimp tool, keepLiNK spare port, CHOCKSMAINPC NIC, Proxmox ports.
-- **Plan:**
-  - Crimp/test short cable first, then long run; consider ISP 2G upgrade if viable (budget/dad concerns).
-- **Status:**
-  - Not started.
+- Test spare/long runs for 2.5G capability
+- Status: Not started
 
 ## Additional Software Exploration
-- **Purpose:**
-  - Setup/eval open-source tools for homelab.
-- **Plan:**
-  - Suricata (IDS/IPS); Crontab Guru/Cronitor (job monitoring); Prometheus/Grafana/InfluxDB/Telegraf/Netdata (monitoring); Duplicati (backups); Scanopy (https://github.com/scanopy/scanopy for network visualization and auto-discovery). dockage/portainer (management) 
-- **Status:**
-  - Not started.
+- Suricata (IDS/IPS), Crontab Guru/Cronitor, Prometheus/Grafana/InfluxDB/Telegraf/Netdata, Duplicati backups, Scanopy network visualization, dockage/portainer
+- Status: Not started
 
 ## Tailscale Advanced
-- **Purpose:**
-  - Advanced Tailscale usage.
-- **Plan:**
-  - Explore exit nodes/filesharing post-stability.
-- **Status:**
-  - Pending exploration.
+- Explore exit nodes/filesharing
+- Status: Not started
 
 ## Unified Backups
-- **Purpose:**
-  - Centralize all backups to NAS /backups folder, with secondary Syncthing copy.
-- **Plan:**
-  - Script/automate for all services (e.g., Jellyfin, HA, etc.).
-- **Status:**
-  - In progress.
+- Centralise to NAS /backups with Syncthing secondary
+- Status: In progress
 
 ## Advanced Monitoring Dashboard on Raspberry Pi
-- **Purpose:**
-  - Build advanced monitoring dashboard with Prometheus/Grafana/InfluxDB/Telegraf/Netdata, cycle pages on timer/metrics (e.g., Jellyfin watch triggers Homarr focus, spikes rotate to CPU/net views); organize growing Docker services and centralize notifications/monitoring for easier management and learning.
-- **Plan:**
-  - Use Pi for dedicated TV display (independent of PC); integrate with existing apps for overview (e.g., stalled alerts, drive risks); keep PC for Wallpaper Engine when wanted.
-- **Status:**
-  - In progress.
+- Dedicated TV display with rotation/alerts
+- Status: In progress
 
 ## Zabbix Monitoring Integration
-- **Purpose:**
-  - Deploy Zabbix for comprehensive homelab monitoring (servers, networks, containers) with dashboards, alerts, and low-resource options for budget setup.
-- **Plan:**
-  - Install server on Beelink Docker or Pi; agents on hosts (e.g., Proxmox, TrueNAS); configure browser GUI for metrics like CPU/net/drives; test scalability for 30+ containers.
-- **Status:**
-  - Not started.
+- Comprehensive homelab monitoring with agents/dashboards
+- Status: Not started

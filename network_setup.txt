@@ -1,87 +1,58 @@
-- **Local Server IP**:
+## **Local Server IP**:
   - 192.168.0.9 (Beelink N150, static)
-- **NAS IP**:
+
+## **NAS IP**:
   - 192.168.0.8 (TrueNAS Scale, static)
-- **Local Network**:
+
+## **Local Network**:
   - Primary LAN: 192.168.0.0/24 (direct from OPNsense vtnet1)
   - Upstairs isolated: 192.168.20.0/24 (OPT1) → 192.168.30.0/24 (NF18Mesh)
-- **Public IP**:
+
+## **Public IP**:
   - 180.150.66.156
-- **Port Forwarding** (Direct on OPNsense WAN):
+
+## **Port Forwarding** (Direct on OPNsense WAN):
   - TCP 80/443 → 192.168.0.9:80/443 (Caddy/Jellyfin external access)
-- **DHCP**:
-  - Migrated to Dnsmasq (recommended backend for small/medium setups; integrates DHCP with local DNS registration). Enabled on LAN (vtnet1) and OPT1 (vtnet2). 
-    - General: Domain "tourmaline.lan"; Listen port 53053 (avoids conflict); DHCP FQDN enabled; Interfaces: LAN + OPT1 selected; Strict binding enabled; DHCP firewall rules auto-registered.
-    - Ranges: 
-      - LAN: 192.168.0.50 to 192.168.0.250 (domain tourmaline.lan; lease time configurable to 3600s/1 hour for faster renews)
-      - OPT1: 192.168.20.10 to 192.168.20.250 (domain tourmaline.lan; lease time configurable to 3600s/1 hour for faster renews)
-    - Static mappings: Added for critical devices (e.g., TrueNAS 192.168.0.8, Home Assistant 192.168.0.2) via Hosts tab (MAC-based reservations with hostnames).
-    - Connector mode with Unbound: Unbound forwards local queries to Dnsmasq for auto hostname resolution from leases/statics.
-  - Lease deletion: Services > Dnsmasq > Leases tab > Delete old entry to force fresh offer on next client request/renew.
-- **DNS Resolver (Unbound)**: Primary client-facing resolver (port 53). Features preserved: OISD blocklist, Quad9 DoT forwarding, DNSSEC validation, NAT redirects forcing DNS to router IP. Query Forwarding added: tourmaline.lan + reverse zones (0.168.192.in-addr.arpa, 20.168.192.in-addr.arpa) to 127.0.0.1:53053. "Register DHCP leases/static mappings" unchecked (handled by Dnsmasq now).
-- **Tenda MX12 Mesh**:
-  - Mode: Access Point only (WiFi SSID "INFINITE AURA" 2.4GHz channel 11, password Awkward88!!!)
-  - No routing/DHCP/NAT/firewall
-  - Uplink to keepLiNK switch
-- **keepLiNK Switch**:
-  - Core downstairs switch, IP 192.168.0.10, MAC 78:D8:00:32:3C:FA, firmware V100.9.9.1.7 (June 7 2025), hardware V3.1.
-  - Connections: Tenda uplink to RJ45 port 8; Beelink bond0 to ports 3-4 via static Trunk2; NAS bond1 to ports 1-2 via LACP Trunk1.
-- **TP-Link LiteWave LS105GP**:
-  - 5-Port PoE Switch (ports 1-4 PoE, port 5 non-PoE), daisy-chained to keepLiNK for PoE continuity.
-  - Use: Powering 2 SMLight devices (ports 3-4): SLZB-06M in Zigbee mode (dynamic IP 192.168.0.12, MAC 0C:DC:7E:36:E5:D7, port 6638, baudrate 115200, adapter ember, firmware OS v3.1.3/Zigbee 20250220; renew via reboot/delete lease); other as Bluetooth mesh hub.
-- **Realtek RTL8156 USB 2.5G Dongles (Beelink)**:
-  - MACs: 00:e0:4c:68:00:5f and 00:e0:4c:68:00:99
-  - Configuration: Bonded as bond0 balance-rr static aggregation
-- **Tailscale (Mesh VPN for Remote Access)**:
-  - Installed on Beelink, CHOCKSMAINPC, phone, Proxmox WAN PC (including OPNsense VM) (free personal plan).
-  - Configuration on OPNsense: Plugin interface assigned as OPT2 "TAIL" (prevent removal ticked); enabled for remote management.
-  - Firewall Rules: On TAIL interface - pass inbound TCP from any to This Firewall ports 8443 (custom web GUI) + 22 (SSH).
-  - Web GUI Binding: Listen Interfaces set to All (includes TAIL for binding on Tailscale IPs).
-  - Tailnet IPs: CHOCKSMAINPC 100.108.206.83, Beelink 100.75.79.68, Phone 100.64.40.62, Proxmox WAN PC 100.112.76.14, IPv6 fd7a:115c:a1e0::6301:4f90.
-  - MagicDNS: proxmox-wan.tail9c7840.ts.net, opnsense-wan.tail9c7840.ts.net:8443.
-- **Proxmox WAN PC (Upstairs WAN Entry)**:
-  - **Hardware**:
-    - Motherboard: ASUS Sabertooth X79
-    - CPU: i7-4930K
-    - RAM: 16GB
-    - PSU: 950W (water-cooled)
-    - NICs:
-      - Silicom Quad Port 10GB PCIe RJ45 X540-T4 (nic0 WAN physical, nic1 LAN physical, nic2 OPT1 physical, nic3 spare for roadmap cable testing)
-      - Onboard Intel 82579V Gigabit (eno1 management to NF18 LAN)
-  - **Software**:
-    - Version: Proxmox VE 9.1.1
-    - Bootloader: GRUB (params in /etc/default/grub + update-grub).
-  - **Networks** (virtual bridges, VirtIO for OPNsense reliability/scalability):
-    - vmbr0: manual, bridge-ports nic0 (WAN physical path to NTD UNI-D 1)
-    - vmbr1: manual, bridge-ports nic1 (LAN physical path to downstairs clients/Tenda)
-    - vmbr2: manual, bridge-ports nic2 (OPT1 physical path to NF18 WAN)
-    - vmbr3: dhcp, bridge-ports eno1 (management DHCP from NF18 upstairs 192.168.30.x subnet)
-    - nic3: Fully spare (no bridge/VM use—for roadmap Ethernet cable testing)
-- **Virtual Machines**:
-  - **OPNsense**:
-      - Specs: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, version 25.7.10- Web GUI: Custom TCP port 8443 (HTTPS; Listen Interfaces = All)
-      - Machine Type: q35
-      - Networks: VirtIO (vtnet0 WAN, vtnet1 LAN, vtnet2 OPT1, tailscale plugin assigned as OPT2 "TAIL" with lock to prevent removal)
-      - Auto-Start: Enabled
-      - Interfaces:
-        - WAN (vtnet0): DHCP public IP (180.150.66.x range, Aussie Broadband FTTP—UNI-D 1 gigabit)
-        - LAN (vtnet1): Static 192.168.0.1/24 
-        - OPT1 (vtnet2): Static 192.168.20.1/24 (upstairs isolated subnet intact via NF18)
-        - TAIL (OPT2): Tailscale plugin interface (enabled/locked to prevent removal; firewall rules on TAIL interface: pass inbound TCP from any to This Firewall ports 8443 (custom GUI) + 22 (SSH); remote GUI/SSH fully functional via Tailscale IPs/hostname with self-signed cert exception)
-      - Notes: Switched from PCI passthrough to VirtIO bridges for reliability; near-native 1G performance; anti-lockout enabled; Tailscale remote GUI/SSH via firewall rules on TAIL interface
-      - Security: OPT1 restricted (block OPT1 to LAN rule added/tested ok, LAN access to OPT1 intact); Proxmox host firewall re-enabled and tested ok (ping/GUI/internet access)
-- **Netcomm NF18Mesh Modem**:
-  - Location: Upstairs
-  - Mode: Double NAT mode (WAN static 192.168.20.12 from OPNsense vtnet2, LAN IP 192.168.30.1/24 with DHCP 192.168.30.10-250 lease time 3600s, provides LAN to upstairs network and Proxmox eno1; GUI port 80; WiFi enabled; firewall disabled; static route for 192.168.0.0/24 via 192.168.20.1; DHCP reservation for dad's PC 192.168.30.3; port forwards for RDP 3389 TCP/UDP to 192.168.30.3:3389, Proxmox GUI 8006 TCP to 192.168.30.14:8006, Proxmox SSH 2222 TCP to 192.168.30.14:22; WAN services enabled for ICMP/HTTP with ACL restricted to 192.168.0.0/24)
-  - Firmware: NF18MESH.NC.ABB-R6B016.EN (latest per Aussie Broadband Sep 2025)
-- **External Domains**:
-  - jellyfin.csokonay.online -> 180.150.66.156 (A record)
-  - sonarr.csokonay.online -> 180.150.66.156 (A record)
-  - prowlarr.csokonay.online -> 180.150.66.156 (A record)
-  - radarr.csokonay.online -> 180.150.66.156 (A record; cert valid via Let's Encrypt until ~Feb 2026)
-  - media.csokonay.online -> 180.150.66.156 (A record, for Caddy testing without DuckDNS)
-  - shoddy88.duckdns.org (static response)
-- **GL.iNet GL-MT6000 (Flint 2) Downstairs AP**:
+
+## **DHCP**:
+  - Backend: Dnsmasq (migrated for integrated DHCP + local DNS hostname registration)
+  - Enabled on LAN (vtnet1) and OPT1 (vtnet2)
+  - General Settings:
+    - Domain: tourmaline.lan
+    - Listen port: 53053 (avoids conflict with Unbound on 53)
+    - DHCP FQDN enabled
+    - Interfaces: LAN + OPT1 selected
+    - Strict binding enabled
+    - DHCP firewall rules auto-registered
+  - IPv4 Ranges:
+    - LAN: 192.168.0.50 to 192.168.0.250 (domain tourmaline.lan; lease time 3600s)
+    - OPT1: 192.168.20.10 to 192.168.20.250 (domain tourmaline.lan; lease time 3600s)
+  - IPv6 Ranges (stateless SLAAC only):
+    - LAN: Start :: (blank end), Constructor LAN, RA Mode ra-stateless, ra-names checked, Advanced Mode enabled, Domain Type Interface, Domain blank (to avoid conflict with IPv4 tourmaline.lan)
+    - OPT1: No IPv6 range (IPv6 disabled on OPT1/NF18 for isolation)
+  - DHCP Options:
+    - Option6 dns-server [23], Interface any, Value [::] (advertises router GUA → Unbound for IPv6 DNS/blocklists)
+  - Static mappings: Critical devices reserved via Hosts tab (MAC-based with hostnames, e.g., TrueNAS 192.168.0.8)
+  - Connector with Unbound: Unbound forwards local queries (tourmaline.lan + reverses) to 127.0.0.1:53053 for hostname resolution from leases/statics
+  - Lease management: Services → Dnsmasq → Leases tab → Delete old entry to force fresh offer on renew
+
+## **DNS Resolver (Unbound)**:
+  - Primary client-facing resolver (port 53)
+  - Features: OISD blocklist, Quad9 DoT forwarding, DNSSEC validation, NAT redirects forcing DNS to router IP
+  - Query Forwarding: tourmaline.lan + reverse zones (0.168.192.in-addr.arpa, 20.168.192.in-addr.arpa) to 127.0.0.1:53053
+  - Register DHCP leases/static mappings: Unchecked (handled by Dnsmasq)
+
+## **IPv6 Configuration** (Native dual-stack on LAN only):
+  - WAN (vtnet0): DHCPv6 with "Request only an IPv6 prefix" and "Send prefix hint" enabled (delegates /48 from Aussie Broadband)
+  - LAN (vtnet1): Track Interface (WAN) with Prefix ID 11; Manual configuration unchecked (auto mode)
+  - OPT1 (vtnet2): Static IPv6 (no tracking/delegation; NF18 IPv6 disabled for isolation)
+  - Router Advertisements: Handled by Dnsmasq (radvd disabled globally)
+    - Stateless SLAAC via ra-stateless + dns-server [23] [::]
+    - Clients receive globals in 2403:5807:8d14:11::/64 range
+    - DNS advertised via option [23] (Unbound caching/TLS/blocklists active over IPv6)
+  - Status: Functional and stable on downstairs LAN (globals persistent, renew reliable); upstairs/OPT1 intentionally no IPv6
+
+## **GL.iNet GL-MT6000 (Flint 2) Downstairs AP**:
   - Mode: Dumb AP (OpenWrt 23.05+ custom build, pure L2 bridge—no routing/DHCP/NAT/firewall)
   - Management IP: Static 192.168.0.254/24 (gateway/DNS 192.168.0.1 for AP updates/NTP)
   - Uplink: LAN port to keepLiNK switch (replaces Tenda MX12)
@@ -90,15 +61,74 @@
     - SSID: "INFINITE AURA" (exact caps/spaces)
     - Encryption: WPA2-PSK
     - Key: Awkward88!!! (exact)
-    - 2.4GHz (radio0): Channel 11, 20 MHz width (legacy/IoT compatibility, matches old Tenda for Chromecast Audio)
-    - 5GHz (radio1): Channel auto, 80 MHz width (WiFi 6 speed boost for modern devices)
+    - 2.4GHz (radio0): Channel 11, 20 MHz width (legacy/IoT compatibility)
+    - 5GHz (radio1): Channel auto, 80 MHz width (WiFi 6 speed boost)
   - Country Code: AU (full legal power/channels)
   - Firewall: Transparent (lan zone forward reject, no wan zone)
-  - IPv6: Disabled (delegation off—handled centrally by OPNsense when enabled)  
-- **Firewall**:
-  - **BEELINK**:
-    - UFW: Active
-    - Allowed Ports: 22, 8096, 7878, 8989, 9696, 8080/tcp, 8191/tcp, 3333, 3334/tcp, 3334/udp (added for Bitmagnet), 8265/tcp, 8266/tcp (added for Tdarr), 9705/tcp (added for Huntarr), 5004/tcp (added for tdarr_inform), 18080/tcp, 18081/tcp (added for Monero node), 9999 (added for Dozzle), 80/tcp (added for Caddy), 443/tcp (added for Caddy), 3001/tcp (added for Dashdot), 7879 (added for Radarr4k), 18081/tcp (Monero RPC), 3001/tcp (Dashdot LAN access)
-    - Specific Rules:
-      - sudo ufw allow from 192.168.0.0/24 to any port 18081 proto tcp comment 'Monero RPC local'
-      - sudo ufw allow from 192.168.0.0/24 to any port 3001 proto tcp comment 'Dashdot LAN access'
+  - IPv6: Disabled (delegation off—handled centrally by OPNsense)
+
+## **keepLiNK Switch**:
+  - Core downstairs switch, IP 192.168.0.10, MAC 78:D8:00:32:3C:FA
+  - Firmware: V100.9.9.1.7 (June 7 2025), hardware V3.1
+  - Connections: Flint 2 uplink to RJ45 port 8; Beelink bond0 to ports 3-4 via static Trunk2; NAS bond1 to ports 1-2 via LACP Trunk1
+
+## **TP-Link LiteWave LS105GP**:
+  - 5-Port PoE Switch (ports 1-4 PoE, port 5 non-PoE), daisy-chained to keepLiNK
+  - Use: Powering 2 SMLight devices (ports 3-4): SLZB-06M in Zigbee mode (dynamic IP 192.168.0.12, MAC 0C:DC:7E:36:E5:D7, port 6638, baudrate 115200, adapter ember, firmware OS v3.1.3/Zigbee 20250220); other as Bluetooth mesh hub
+
+## **Realtek RTL8156 USB 2.5G Dongles (Beelink)**:
+  - MACs: 00:e0:4c:68:00:5f and 00:e0:4c:68:00:99
+  - Configuration: Bonded as bond0 balance-rr static aggregation
+
+## **Tailscale (Mesh VPN for Remote Access)**:
+  - Installed on Beelink, CHOCKSMAINPC, phone, Proxmox WAN PC (including OPNsense VM) (free personal plan)
+  - OPNsense config: Plugin interface OPT2 "TAIL" (prevent removal ticked)
+  - Firewall Rules: TAIL interface pass inbound TCP from any to This Firewall ports 8443 (custom web GUI) + 22 (SSH)
+  - Web GUI Binding: Listen Interfaces All (includes TAIL)
+  - Tailnet IPs: CHOCKSMAINPC 100.108.206.83, Beelink 100.75.79.68, Phone 100.64.40.62, Proxmox WAN PC 100.112.76.14
+  - MagicDNS: proxmox-wan.tail9c7840.ts.net, opnsense-wan.tail9c7840.ts.net:8443
+
+## **Proxmox WAN PC (Upstairs WAN Entry)**:
+  - Hardware: ASUS Sabertooth X79 motherboard; i7-4930K CPU; 16GB RAM; 950W PSU (water-cooled)
+  - NICs: Silicom Quad Port 10GB PCIe RJ45 X540-T4 (nic0 WAN, nic1 LAN, nic2 OPT1, nic3 spare); onboard Intel 82579V Gigabit (eno1 management to NF18)
+  - Software: Proxmox VE 9.1.1; GRUB bootloader
+  - Networks (VirtIO bridges):
+    - vmbr0: manual, bridge-ports nic0 (WAN to NTD UNI-D 1)
+    - vmbr1: manual, bridge-ports nic1 (LAN downstairs)
+    - vmbr2: manual, bridge-ports nic2 (OPT1 to NF18 WAN)
+    - vmbr3: dhcp, bridge-ports eno1 (management from NF18 192.168.30.x)
+    - nic3: Spare (roadmap cable testing)
+
+## **Virtual Machines**:
+  - OPNsense: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, version 25.7.10
+    - Web GUI: Custom TCP port 8443 (HTTPS; Listen Interfaces All)
+    - Machine Type: q35
+    - Networks: VirtIO (vtnet0 WAN, vtnet1 LAN, vtnet2 OPT1, OPT2 TAIL locked)
+    - Auto-Start: Enabled
+    - Interfaces: WAN DHCP public IP; LAN static 192.168.0.1/24; OPT1 static 192.168.20.1/24; TAIL Tailscale plugin
+    - Security: OPT1 restricted (block OPT1 to LAN rule); Proxmox host firewall enabled
+
+## **Netcomm NF18Mesh Modem**:
+  - Location: Upstairs
+  - Mode: Double NAT (WAN static 192.168.20.12 from OPNsense, LAN 192.168.30.1/24 with DHCP 192.168.30.10-250)
+  - GUI port 80; WiFi enabled; firewall disabled
+  - Static route: 192.168.0.0/24 via 192.168.20.1
+  - DHCP reservation: Dad's PC 192.168.30.3
+  - Port forwards: RDP 3389 TCP/UDP to 192.168.30.3:3389; Proxmox GUI 8006 TCP to 192.168.30.14:8006; Proxmox SSH 2222 TCP to 192.168.30.14:22
+  - WAN services: ICMP/HTTP enabled with ACL restricted to 192.168.0.0/24
+  - Firmware: NF18MESH.NC.ABB-R6B016.EN (latest per Aussie Broadband Sep 2025)
+
+## **External Domains**:
+  - jellyfin.csokonay.online → 180.150.66.156 (A)
+  - sonarr.csokonay.online → 180.150.66.156 (A)
+  - prowlarr.csokonay.online → 180.150.66.156 (A)
+  - radarr.csokonay.online → 180.150.66.156 (A; cert valid via Let's Encrypt until ~Feb 2026)
+  - media.csokonay.online → 180.150.66.156 (A, Caddy testing)
+  - shoddy88.duckdns.org (static response)
+
+## **Firewall (Beelink UFW)**:
+  - Active
+  - Allowed Ports: 22, 8096, 7878, 8989, 9696, 8080/tcp, 8191/tcp, 3333, 3334/tcp+udp, 8265/tcp, 8266/tcp, 9705/tcp, 5004/tcp, 18080/tcp, 18081/tcp, 9999/tcp, 80/tcp, 443/tcp, 3001/tcp, 7879/tcp
+  - Specific Rules:
+    - Allow from 192.168.0.0/24 to any port 18081 proto tcp (Monero RPC local)
+    - Allow from 192.168.0.0/24 to any port 3001 proto tcp (Dashdot LAN access)
