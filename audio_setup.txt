@@ -111,4 +111,4 @@ Goal:
 - Perfectly synchronized playback from Music Assistant (YouTube Music provider)
 - Initial source integration via shairport-sync (AirPlay receiver) piping to snapserver FIFO
 
-Status: Hardware acquired, setup in progress
+Status: snapserver v0.34.0 installed natively on Beelink, test configuration active

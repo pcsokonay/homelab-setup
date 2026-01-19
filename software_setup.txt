@@ -1,7 +1,9 @@
 ## Software Setup
+
 - **Beelink**
   - **OS**:
     - Ubuntu Server 24.04.3 LTS (Beelink N150, installed, deferred updates installed for openssh/coreutils; timezone Australia/Sydney, HWE kernel installed for i915 support)
+
   - **Scripts**:
     - /cache/downloads/qb_complete_copy.sh: Auto-copies completed torrents to staging/NAS
     - /usr/local/bin/striptracks_batch.sh: Used to run striptracks on entire media library
@@ -11,11 +13,21 @@
     - ~/docker-homelab/stack-health-check.sh: Monitors stack health via escalating curls on Radarr/Sonarr/qBittorrent ports; restarts compose on failure and loops until success (30s sleep, reduced logging to issues only; infinite retries; tested and live) 
       - Logs: To /var/log/stack-health.log
       - Service: Turned into a system service at /etc/systemd/system/stack-health.service
+
   - **Crontab**:
     - */5 * * * * /home/chocks/docker-homelab/qb_port_sync.sh
     - 0 3 * * * /home/chocks/docker-homelab/jellyfin_backup.sh
     - 0 * * * * find /cache/downloads/complete -type d -name '_FAILED_*' -empty -exec rm -rf {} \;
     - 0 3 * * * /home/chocks/truncate-nas-log.sh 
+
+  - **Snapcast Server**:
+    - Version: 0.34.0
+    - Installation: Built from source on Beelink (January 19, 2026)
+    - Binary: /usr/local/bin/snapserver
+    - Config: /etc/snapserver.conf (minimal test pipe stream with mode=create)
+    - Service: /etc/systemd/system/snapserver.service (enabled, auto-restart)
+    - Status: Installed and running for testing
+
   - **Nextcloud**:
     - Installation: Docker (custom local/nextcloud:stable-apache with SMB support, merged into main stack on 02/JAN/2026, rebuilt 03/JAN/2026)
     - Volumes: Named volumes nextcloud_data:/var/www/html, db_data:/var/lib/mysql (local persistence on Beelink SSD); custom ./nextcloud-custom/opcache.ini mounted for PHP tuning
@@ -30,12 +42,15 @@
     - Access: https://nextcloud.csokonay.online (external via Caddy/Let's Encrypt HTTPS/HSTS, app/client sync stable over mobile/Windows; External Storage app enabled, TrueNAS integration working)
     - Config: occ for trusted domains/proxies/overwrite, maintenance window (4), default_phone_region "AU", mimetype migration complete
     - Notes: Low resource use; HSTS warning ignorable (Caddy external); opcache tuned for spare RAM/longer caching; custom image rebuild on major updates; TrueNAS External Storage snappy/reliable
+
   - **Media Management**:
+
     - **Bazarr** (Alternative Installation):
       - Docker (linuxserver/bazarr:1.2.13, port 6767, upgraded post-Goldeneye with PUID=3000 fix)
       - Volumes: /mnt/media/media/bazarr-config:/config, /mnt/media/Media/Movies:/movies, /mnt/media/Media/TV_Series:/tv
       - Environment: PUID=3000, PGID=3000, TZ=Australia/Sydney
       - Config: Restored from backup zip on 14/NOV/2025; beta branch tweaks for tuple/PermissionError
+
     - **Tdarr (Beelink Server)**:
       - Installation: Docker (ghcr.io/haveagitgat/tdarr:2.55.01, ports 8265:8265, 8266:8266, version 2.55.01)
       - Volumes: ./tdarr/server:/app/server, ./tdarr/configs:/app/configs, ./tdarr/logs:/app/logs, /cache/tdarr-cache:/temp, /mnt/media:/media
@@ -43,6 +58,7 @@
       - Devices: /dev/dri:/dev/dri (iGPU)
       - Restart: unless-stopped
       - Config: Path translators in Tdarr_Server_Config.json for /media/Media to /library/Media
+
     - **Jellyfin**:
       - Installation: Docker (jellyfin/jellyfin:latest, ports 8096, 7359/udp, version updated to latest on 16/NOV/2025)
       - Volumes: /mnt/media:/media:ro, ./jellyfin/config:/config, ./jellyfin/cache:/cache
@@ -54,6 +70,7 @@
         - Trakt (installed and configured with sync on 16/NOV/2025)
         - TMDb Box Sets (installed on 16/NOV/2025)
         - Intro Skipper (installed via https://manifest.intro-skipper.org/manifest.json on 16/NOV/2025)
+
     - **Sonarr**:
       - Installation: Docker (linuxserver/sonarr:latest, port 8989)
       - Volumes: /mnt/media:/media, ./sonarr/config:/config, /cache/downloads:/downloads
@@ -63,6 +80,7 @@
       - Connected Apps: Prowlar[](http://prowlarr:9696), qBittorren[](http://qbittorrent:8080), SABnzb[](http://sabnzbd:8085)
       - API Key: efa8d6849e7b460db0ac6bff3c54b717
       - Custom Script on Import: sab_combined.sh for striptracks (if NZB)
+
     - **Radarr**:
       - Installation: Docker (linuxserver/radarr:latest, port 7878)
       - Volumes: /mnt/media:/media, ./radarr/config:/config, /cache/downloads/complete:/downloads/complete
@@ -72,6 +90,7 @@
       - Connected Apps: Prowlar[](http://prowlarr:9696), qBittorren[](http://qbittorrent:8080), SABnzb[](http://sabnzbd:8085)
       - API Key: fef1037838694caabbdbfcc98b4f9ee3
       - Custom Script on Import: sab_combined.sh for striptracks (if NZB)
+
     - **Radarr4k**:
       - Installation: Docker (linuxserver/radarr:latest, port 7879:7878)
       - Volumes: /mnt/media:/media, ./radarr4k/config:/config, /cache/downloads/complete/movies_4K:/downloads
@@ -84,6 +103,7 @@
       - API Key: [TBD - user to provide]
       - Custom Script on Import: sab_combined.sh for striptracks (if NZB)
       - Purpose: Dedicated for 4K HDR content; added 04/DEC/2025
+
     - **Prowlarr**:
       - Installation: Docker (linuxserver/prowlarr:latest, port 9696)
       - Volumes: ./prowlarr/config:/config
@@ -92,6 +112,7 @@
       - Indexers: TorrentLeech (API key 3d3a5c1a-0a00-4b0e-8f0a-0a00-4b0e-8f0a, categories 1/8/9/11/12/13/14/17/19/20/21/26/27/28/29/30/31/32/35/43, seed ratio/time 1.5/10d)
       - Integration: Bypassr for Cloudflare (http://bypassr:8191, test run successful)
       - Sync: With Sonarr/Radarr (level 2, auto tag enabled)
+
   - **Downloaders**:
     - **SABnzbd**:
       - Installation: Docker (linuxserver/sabnzbd:latest, port 8085)
@@ -101,6 +122,7 @@
       - Categories: movies (/downloads/complete/movies), tv (/downloads/complete/tv), movies4k (/downloads/complete/movies_4K)
       - Script on Complete: sab_combined.sh (striptracks + move to NAS /Media/Movies or /Media/TV_Series)
       - API Key: 159ef74f1fa24ecf9d727f5b4da11061
+
     - **qBittorrent**:
       - Installation: Docker (linuxserver/qbittorrent:latest, port 8080)
       - Volumes: /cache/downloads:/downloads, ./qbittorrent/config:/config, /mnt/media/downloads/watch:/watch, /mnt/media:/mnt/media
@@ -109,9 +131,12 @@
       - Categories: movies (save /downloads/complete/movies), tv (save /downloads/complete/tv), tl (save /downloads/complete/tl, tag tl_tracker), movies4k (save /downloads/complete/movies_4K)
       - Script: qb_port_sync.sh (syncs Proton port every 5 min via cron)
       - Configuration: Hardlinks disabled (use copies for striptracks compatibility)
+
   - **Utilities**:
+
 	  - **Decluttarr**:
       - Status: Running live and handling queue cleanups effectively, with TL protection via tags
+
     - **Striptracks Setup**:
       - Dependencies: ffmpeg, mkvtoolnix
       - Script Location: /usr/local/bin/striptracks.sh
@@ -131,6 +156,7 @@
       - Pivoted for *arr, use Completed Handling + mod on NAS
       - For manual, adapt qb_complete_copy.sh to copy whole to NAS /complete/ (no strip)
       - Issues Resolved: Tuple/PermissionError fixed via beta branch, PUID/PGID=3000, aclmode=passthrough
+
     - **qBit Manage**:
       - Installation: Docker (ghcr.io/stuffanthings/qbit_manage:latest, port 8081:8080)
       - Volumes: ./qbit_manage:/config, /cache/downloads:/downloads
@@ -153,17 +179,21 @@
           - tl (include_any_tags tl_tracker, max_ratio 1.5, min_seeding_time 0, max_seeding_time 10d, cleanup true, ignore_stalled true, priority 1)
           - arr_public (categories radarr/sonarr/prowlarr, exclude_any_tags tl_tracker, max_ratio 1.5, min_seeding_time 0, max_seeding_time 3d, cleanup true, ignore_stalled false, priority 2)
           - manual_public (categories public/Uncategorized/tl, exclude_any_tags tl_tracker, max_ratio 1.5, min_seeding_time 0, max_seeding_time 3d, cleanup true, ignore_stalled false, priority 3)
+
   - **Monitoring and Dashboards**:
+
     - **Notifiarr**:
       - Installation: Docker (golift/notifiarr:latest, port 5454)
       - Volumes: ./notifiarr/config:/config, /etc/machine-id:/etc/machine-id:ro
       - Environment: DN_API_KEY=6c410b3f-09a7-4b1e-ba77-7aeb329b47a4, DN_UI_PASSWORD=M2i4W7mRx&68Bp, DN_LOG_FILE=/config/notifiarr.log, DN_BIND_ADDR=0.0.0.0:5454, TZ=Australia/Sydney
       - Hostname: beelink-notifiarr
       - Restart: unless-stopped
+
     - **MDBListarr**:
       - Installation: Docker (linaspurinis/mdblistarr:v2-beta)
       - Web UI: http://192.168.0.9:5353/
       - Integration: With Notifiarr (watch for conflicts, but working well atm)
+
     - **Dozzle**:
       - Installation: Docker (amir20/dozzle:latest, port 9999:8080, installed on 16/NOV/2025)
       - Volumes: /var/run/docker.sock:/var/run/docker.sock:ro
@@ -171,18 +201,21 @@
       - Network Mode: host
       - Restart: unless-stopped
       - Access: http://192.168.0.9:9999 (live container logs viewer)
+
     - **Dockwatch**:
       - Installation: Docker (ghcr.io/notifiarr/dockwatch:main, port 8888:80, installed on 16/NOV/2025)
       - Volumes: /home/dockwatch/config:/config, /var/run/docker.sock:/var/run/docker.sock
       - Environment: PUID=1000, PGID=1000, TZ=Australia/Sydney, NOTIFIARR_API_KEY=36505160-2f1a-4bcc-856e-2b07318666bb
       - Restart: unless-stopped
       - Access: http://192.168.0.9:8888 (Docker update manager with schedules and alerts)
+
     - **Homarr**:
       - Installation: Docker (ghcr.io/homarr-labs/homarr:latest, port 7575, installed on 16/NOV/2025)
       - Volumes: /var/run/docker.sock:/var/run/docker.sock:ro, ./homarr/appdata:/appdata
       - Environment: TZ=Australia/Sydney, SECRET_ENCRYPTION_KEY=d2b177a5d4155c7ec3dfcd7cad22f2a0b473db39180d41bd66818820ce949cb
       - Restart: unless-stopped
       - Access: http://192.168.0.9:7575 (dashboard for services, widgets for *arr/Jellyfin/TrueNAS)
+
     - **Dashdot**:
       - Installation: Docker (mauricenino/dashdot:latest, port 3001, installed on 23/NOV/2025)
       - Volumes: ./dashdot/config:/config, /:/mnt/host:ro, /boot:/mnt/host/boot:ro, /boot/efi:/mnt/host/boot/efi:ro, /cache:/mnt/host/cache:ro, /mnt/media:/mnt/host/mnt/media:ro
@@ -191,7 +224,9 @@
       - Restart: unless-stopped
       - Access: http://192.168.0.9:3001 (lightweight system metrics dashboard; integrates with Homarr via Dash. widget at http://localhost:3001)
       - Notes: Host lm-sensors installed for temps (sudo apt install lm-sensors; sudo sensors-detect); storage shows most mounts/usage (minor LVM blank on root /); low overhead (<1% CPU idle)
+
   - **Networking and Proxy**:
+
     - **Caddy**:
       - Installation: Docker (caddy:latest, ports 80:80, 443:443, installed on 16/NOV/2025, migrated fully to Beelink on 28/NOV/2025)
       - Volumes: ./caddy/data:/data, ./caddy/config:/config, ./caddy/Caddyfile:/etc/caddy/Caddyfile
@@ -199,9 +234,12 @@
       - Restart: unless-stopped
       - Caddyfile: Configured with reverse proxies for jellyfin.csokonay.online:8096, sonarr.csokonay.online:8989, prowlarr.csokonay.online:9696, radarr.csokonay.online:7878 (with timeouts/header tweaks)
       - Access: https://jellyfin.csokonay.online (and others; certs via Let's Encrypt, valid until ~Feb 2026; external access tested and working)
+
   - **Privacy and Crypto**:
+
     - **Tor and Monero Setup (Separate Compose)**:
       - Management: Via ~/monero-tor/docker-compose.yml (created 15/DEC/2025 for modularity and independent management)
+
       - **Tor**:
         - Image: peterdavehello/tor-socks-proxy:latest
         - Container: tor
@@ -210,6 +248,7 @@
         - Volumes: ./torrc:/etc/tor/torrc:ro, ./tor-data:/var/lib/tor (permission fix: sudo rm -rf and chown -R 100:101 ~/monero-tor/tor-data; resolved denied errors 15/DEC/2025)
         - Healthcheck: Overridden with longer timeout/start-period (test curl -f -s --socks5-hostname 127.0.0.1:9150 -m 10 https://check.torproject.org/api/ip || exit 1, interval 30s, timeout 15s, start_period 90s, retries 3; resolved timeout failures 15/DEC/2025—now healthy after ~15s)
         - Config: Custom torrc mounted from host ~/monero-tor/torrc for hidden service (SocksPort 0.0.0.0:9150, DNSPort 0.0.0.0:8853, HiddenServiceDir /var/lib/tor/monero-service, HiddenServicePort 18080 127.0.0.1:18080, HiddenServiceDir /var/lib/tor/monero-rpc-service, HiddenServicePort 18081 127.0.0.1:18081; added RPC mapping 16/DEC/2025 for wallet testing)
+
       - **Monero Node**:
         - Image: monero-node-monerod:latest (local build from https://codeberg.org/jahway603/docker-monero-node, v0.18.4.3 'Fluorine Fermi', pruned)
         - Container: monero
@@ -220,7 +259,9 @@
         - Healthcheck: Removed (15/DEC/2025; image lacks curl, status 'none' by default—monitor manually via logs/RPC)
         - Depends On: tor (condition: service_healthy; added 15/DEC/2025 for readiness)
         - Notes: Local-only RPC (UFW LAN rule); Tor hidden service active for private throttled inbound P2P (1024KB/s up, 4 peers max; no advertising for low exposure/privacy); DNSSEC warnings suppressed with --disable-dns-checkpoints (15/DEC/2025; skips checkpoints, low risk); "No incoming connections" log normal for private setup (check inbound via RPC incoming_connections_count); .onion address: 4uypf3i3vc5azpvbtwhdfg7qrwysajvjjkto635xgofvycovizvuxiad.onion (P2P, generated 16/DEC/2025; use for private testing, e.g., add as --add-peer=youronion.onion:18080 in wallet); RPC .onion: xvytnah47ka6nuxr7oeoxnumjgclnljccke2ydzxrzitjexapq2vu4qd.onion (generated 16/DEC/2025; Cake Wallet syncs over Tor .onion RPC on phone 18/DEC/2025; anonymous remote sync confirmed via Tailscale)
+
   - **File Sharing**:
+
     - **Samba (Beelink)**:
       - Package: samba (installed for SMB server functionality)
       - Shares: /home/chocks (shared as "chocks", mapped to Y:\ on CHOCKSMAINPC; browseable, writable for user chocks)
@@ -228,15 +269,21 @@
       - Defaults: /etc/default/samba with NMBDOPTIONS="" and SMBDOPTIONS="" (added 24/NOV/2025 to fix nmbd startup timeout due to unset env vars)
       - Services: smbd (active), nmbd (active post-fix, handles NetBIOS name resolution)
       - Notes: Beelink acts as SMB server for local shares; client-side for NAS mount (/mnt/media via cifs-utils in fstab); no UFW additions needed for LAN (default allows 445/tcp)
+
 - **CHOCKSMAINPC**
+
   - **OS**:
     - Windows 10/11 (CHOCKSMAINPC)
+
   - **Tdarr (CHOCKSMAINPC Node)**:
     - Installation: Native Windows (Tdarr_Updater extracted to C:\Tdarr, version 2.55.01 upgraded on 14/NOV/2025)
     - Config: At C:\Tdarr\configs\Tdarr_Node_Config.json (serverURL: http://192.168.0.9:8266, nodeName: ChocksMainPC-Node)
+
 - **TrueNAS**
+
   - **OS**:
     - TrueNAS Scale: Goldeneye-25.10.0 (upgraded from Fangtooth-25.04.2.5 via 25.04.2.6 on 14/NOV/2025; boot-pool compression set to lz4 local recursively to resolve GRUB/inherit errors)
+
   - **Bazarr**:
     - Installation: As custom app on TrueNAS (image linuxserver/bazarr:development, version v1.5.4-beta.8, ports 6767)
     - Volumes:
@@ -245,6 +292,7 @@
       - /movies:/mnt/media/media/Media/Movies
     - Environment: PUID/PGID=3000, TZ=Australia/Sydney
     - Issues Resolved: Tuple/PermissionError fixed via beta branch, PUID/PGID=3000, aclmode=passthrough
+
   - **Tdarr (NAS Node)**:
     - Installation: Via TrueNAS Apps (image ghcr.io/haveagitgat/tdarr_node:latest, no ports, version 2.55.01)
     - Volumes: /mnt/media/media:/library:rw, /mnt/media/tdarr-cache:/temp:rw, /mnt/media/media/tdarr-node-configs:/app/configs:rw
@@ -253,7 +301,9 @@
     - Command: node /app/Tdarr_Node/srcug/main.js (adjusted for startup/connection)
     - Config: Tdarr_Node_Config.json with pathTranslators for /media/Media to /library/Media
     - Restart: unless-stopped, privileged=true
+
   - **Monitoring and Dashboards**:
+
     - **Scrutiny**:
       - Installation: Via TrueNAS Apps (image scrutiny:latest, port TBD)
       - Volumes: ./scrutiny/config:/config
@@ -261,6 +311,7 @@
       - Restart: unless-stopped
       - Access: http://192.168.0.8:8080 (or custom port; dashboard for visualizing SMART data/attributes/temps; no test scheduling)
       - Notes: Installed for convenient GUI monitoring of disk health; complements built-in Goldeneye alerts without adding wear
+
   - **Home Assistant**:
     - Name: HomeAssistant
     - Guest OS: Linux
@@ -277,17 +328,13 @@ Cloud Endpoints Setup:
   [Unit]
   Description=Netperf Server
   After=network.target
-
   [Service]
   ExecStart=/usr/bin/netserver -4 -L 0.0.0.0 -p 12865 -D
   Restart=always
   User=root
-
   [Install]
   WantedBy=multi-user.target
-
   Commands: sudo systemctl daemon-reload; sudo systemctl enable --now netserver.service
-
 - **Iptables Rules for Netserver (Ubuntu with netfilter-persistent; allows from specific source IP like homelab 180.150.66.156)**:
   - Install: sudo apt update && sudo apt install -y netfilter-persistent iptables-persistent
   - Remove default REJECT: sudo iptables -D INPUT <line_number> (e.g., 5; inspect with sudo iptables -L INPUT -n -v --line-numbers)
@@ -299,7 +346,7 @@ Cloud Endpoints Setup:
   - Save: sudo netfilter-persistent save
   - Verify: sudo iptables -L INPUT -n -v --line-numbers (shows pkts/bytes counters for hits; reset with sudo iptables -Z)
 
-  ## Local CLI AI Assistant (GPU-Accelerated)
+## Local CLI AI Assistant (GPU-Accelerated)
 - **Central Server (chocksmainpc Windows)**:
   - Ollama: Native Windows app (v0.13.x+), CUDA-enabled for GTX 4090.
   - Models: gemma3:27b (primary, 128K context), llama3.1:70b (heavy), llama3.2:3b (light).
