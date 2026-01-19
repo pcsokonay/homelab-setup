@@ -24,9 +24,9 @@
     - Version: 0.34.0
     - Installation: Built from source on Beelink (January 19, 2026)
     - Binary: /usr/local/bin/snapserver
-    - Config: /etc/snapserver.conf (minimal test pipe stream with mode=create)
-    - Service: /etc/systemd/system/snapserver.service (enabled, auto-restart)
-    - Status: Installed and running for testing
+    - Config: /etc/snapserver.conf (pipe stream with mode=create, updated to modern keys)
+    - Service: /etc/systemd/system/snapserver.service (enabled, auto-restart, WorkingDirectory=/tmp)
+    - Status: Running persistently, snapweb accessible at port 1780
 
   - **Nextcloud**:
     - Installation: Docker (custom local/nextcloud:stable-apache with SMB support, merged into main stack on 02/JAN/2026, rebuilt 03/JAN/2026)
