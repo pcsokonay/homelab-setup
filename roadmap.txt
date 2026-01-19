@@ -15,8 +15,9 @@
 - Status: Not started
 
 ## Integrate Snapcast
-- Synchronous multiroom audio extending Jellyfin
-- Status: Not started
+- Synchronous multi-room audio for Music Assistant (YouTube Music provider)
+- 4x Raspberry Pi Zero 2 W clients with PCM5102A I2S DACs
+- Status: In progress
 
 ## Explore Tdarr for AV1 Transcoding
 - Library compression to save space

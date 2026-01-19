@@ -11,3 +11,8 @@
 - Cloud Testing Servers:
   - GCP VM: 35.189.61.183 (australia-southeast1, e2-medium, netserver port 12865 for bufferbloat)
   - Oracle Cloud VM: 152.67.127.81 (Sydney, VM.Standard.E2.1.Micro, Ubuntu, netserver port 12865 for bufferbloat)
+- external-tester: Alpine Linux VM on Proxmox WAN PC (upstairs behind NF18, DHCP from 192.168.30.x range; used for external Jellyfin/access testing—no IPv6)  
+- snapclient1: Planned Raspberry Pi Zero 2 W audio endpoint (room 1)
+- snapclient2: Planned Raspberry Pi Zero 2 W audio endpoint (room 2)
+- snapclient3: Planned Raspberry Pi Zero 2 W audio endpoint (room 3)
+- snapclient4: Planned Raspberry Pi Zero 2 W audio endpoint (room 4)
