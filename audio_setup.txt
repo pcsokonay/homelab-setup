@@ -108,4 +108,4 @@ Hardware:
 Goal:
 - Perfectly synchronized playback from Music Assistant (YouTube Music provider)
 - Initial source integration via shairport-sync (AirPlay receiver) piping to snapserver FIFO
-Status: snapserver v0.34.0 running as systemd service on Beelink, test stream active
+Status: snapserver v0.34.0 running as systemd service on Beelink; first client (snapclient1) assembled, I2S overlay enabled, PCM5102A DAC detected as card 1 (local audio output silent during testing)
