@@ -20,13 +20,14 @@
     - 0 * * * * find /cache/downloads/complete -type d -name '_FAILED_*' -empty -exec rm -rf {} \;
     - 0 3 * * * /home/chocks/truncate-nas-log.sh 
 
-  - **Snapcast Server**:
+  - **Snapcast Clients** (on snapclient1–4):
     - Version: 0.34.0
-    - Installation: Built from source on Beelink (January 19, 2026)
-    - Binary: /usr/local/bin/snapserver
-    - Config: /etc/snapserver.conf (pipe stream with mode=create, updated to modern keys)
-    - Service: /etc/systemd/system/snapserver.service (enabled, auto-restart, WorkingDirectory=/tmp)
-    - Status: Running persistently, snapweb accessible at port 1780
+    - Installation: Built from source on each Raspberry Pi Zero 2 W (January 22, 2026)
+    - Binary: /usr/local/bin/snapclient
+    - Dependencies: Temporary 2GB swapfile during compile (removed post-build); libflac-dev libogg-dev libvorbis-dev libopus-dev libssl-dev libasound2-dev libavahi-client-dev libboost-program-options-dev
+    - Build flags: -DBUILD_CLIENT=ON -DBUILD_SERVER=OFF, single-threaded (-j1) to avoid OOM
+    - ALSA config: /etc/asound.conf defaults to hw card 1 (PCM5102A DAC)
+    - Status: Installed on all 4 clients
 
   - **Nextcloud**:
     - Installation: Docker (custom local/nextcloud:stable-apache with SMB support, merged into main stack on 02/JAN/2026, rebuilt 03/JAN/2026)

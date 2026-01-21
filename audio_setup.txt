@@ -111,4 +111,4 @@ Configurations (per client):
 Goal:
 - Perfectly synchronized playback from Music Assistant (YouTube Music provider)
 - Initial source integration via shairport-sync (AirPlay receiver) piping to snapserver FIFO
-Status: snapserver v0.34.0 running as systemd service on Beelink; all 4 clients assembled, soldered, configured, and local audio verified (clear stereo output, no distortion)
+Status: snapserver v0.34.0 running as systemd service on Beelink; all 4 clients assembled, soldered, configured, local audio verified (clear stereo output, no distortion); snapclient v0.34.0 installed on all 4 Pis
