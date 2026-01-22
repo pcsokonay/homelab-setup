@@ -100,7 +100,7 @@ Preamp: 10 dB
 VSTPlugin: Library "C:\Program Files\VSTPlugins\ReaPlugs\reagate-standalone.dll" Hipass 0 Thresh 0.00562341 Attack 0.00467278 Release 0.20123 Pre-open 0.00762284 Hold 0.153719 Lowpass 1 SignIn 0 AudIn 0 Dry 0 Noise 0 Wet 1 Hystrsis 1 PreviewF 0 "RMS size" 0.147734 Usemidi 0 MidiNote 0.543307 MidiChan 0 InvrtWet 0
 
 ## Homelab Multi-Room Audio (Snapcast)
-Date: January 21, 2026
+Date: January 22, 2026
 Hardware:
 - 4x Raspberry Pi Zero 2 W (hostnames: snapclient1 to snapclient4, username: chocks)
 - 4x PCM5102A I2S DAC Decoder boards (purple PCB, required solder bridges: back pads FLT-L normal latency, DEMP-L off, XSMT-H unmute, FMT-L I2S; front pads tie SCK low for internal PLL)
@@ -108,7 +108,11 @@ Hardware:
 Configurations (per client):
 - /boot/firmware/config.txt: dtparam=i2s=on and dtoverlay=hifiberry-dac
 - /etc/asound.conf: Default to hw card 1 (PCM5102A)
+- Systemd service: snapclient.service with ExecStart using tcp://beelink.local:1704 -s plughw:1,0
+Server:
+- snapserver v0.34.0 native on Beelink, pipe stream /tmp/snapfifo (mode=create)
+Integration:
+- shairport-sync on Beelink piping AirPlay audio to snapfifo
 Goal:
 - Perfectly synchronized playback from Music Assistant (YouTube Music provider)
-- Initial source integration via shairport-sync (AirPlay receiver) piping to snapserver FIFO
-Status: snapserver v0.34.0 running as systemd service on Beelink; all 4 clients assembled, soldered, configured, local audio verified (clear stereo output, no distortion); snapclient v0.34.0 installed on all 4 Pis; server-client connection established (test stream reaches clients)
+Status: Full synchronized white noise playback verified across all 4 clients (perfect timing, services persistent); shairport-sync installed and running for AirPlay bridge

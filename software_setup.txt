@@ -27,7 +27,16 @@
     - Dependencies: libflac-dev libogg-dev libvorbis-dev libopus-dev libssl-dev libasound2-dev libavahi-client-dev libboost-program-options-dev
     - Build flags: -DBUILD_CLIENT=ON -DBUILD_SERVER=OFF, single-threaded (-j1) with temporary 2GB swapfile to avoid OOM on 512MB RAM
     - ALSA config: /etc/asound.conf defaults to hw card 1 (PCM5102A DAC)
-    - Status: Installed on all 4 clients; manual connection to snapserver succeeds
+    - Systemd service: /etc/systemd/system/snapclient.service
+    - ExecStart: /usr/local/bin/snapclient tcp://beelink.local:1704 -s plughw:1,0
+    - Status: Enabled and running on all 4 clients (January 22, 2026)
+
+  - **Shairport-Sync** (AirPlay receiver for Snapcast integration):
+    - Installation: apt package on Beelink (January 22, 2026)
+    - Config: /etc/shairport-sync.conf with alsa pipe output to /tmp/snapfifo
+    - Service: shairport-sync.service (enabled, running)
+    - Purpose: Pipe audio from Music Assistant AirPlay target to snapserver FIFO for synchronized multi-room playback
+    - Status: Installed and active; pipe configuration pending test
 
   - **Nextcloud**:
     - Installation: Docker (custom local/nextcloud:stable-apache with SMB support, merged into main stack on 02/JAN/2026, rebuilt 03/JAN/2026)
