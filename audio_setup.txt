@@ -100,7 +100,7 @@ Preamp: 10 dB
 VSTPlugin: Library "C:\Program Files\VSTPlugins\ReaPlugs\reagate-standalone.dll" Hipass 0 Thresh 0.00562341 Attack 0.00467278 Release 0.20123 Pre-open 0.00762284 Hold 0.153719 Lowpass 1 SignIn 0 AudIn 0 Dry 0 Noise 0 Wet 1 Hystrsis 1 PreviewF 0 "RMS size" 0.147734 Usemidi 0 MidiNote 0.543307 MidiChan 0 InvrtWet 0
 
 ## Homelab Multi-Room Audio (Snapcast)  
-Date: January 22, 2026  
+Date: January 23, 2026  
 Hardware:  
 - 4x Raspberry Pi Zero 2 W (hostnames: snapclient1 to snapclient4, username: chocks)  
 - 4x PCM5102A I2S DAC Decoder boards (purple PCB, required solder bridges: back pads FLT-L normal latency, DEMP-L off, XSMT-H unmute, FMT-L I2S; front pads tie SCK low for internal PLL)  
@@ -112,14 +112,12 @@ Configurations (per client):
 Server (Beelink):  
 - snapserver v0.34.0  
 - Config:  
-  - Primary stream: Dynamic TCP ports (4953-5153) for Music Assistant native integration (lower latency, direct group control)  
+  - Primary: Dynamic TCP ports (4953-5153 open via UFW from 192.168.0.2) for Music Assistant native integration (direct group control, ~200-500ms latency)  
   - Fallback stream: pipe:///tmp/snapfifo?name=MultiSpeaker&sampleformat=44100:16:2&mode=create  
-- FIFO: /tmp/snapfifo (rw-rw-rw-) for AirPlay fallback  
+- Firewall (UFW): Allow from 192.168.0.2 to 4953:5153/tcp (MA dynamic streams)  
 AirPlay Bridge (Beelink, fallback only):  
 - shairport-sync (apt package)  
 - Config (/etc/shairport-sync.conf): general name = "Homelab Multiroom"; output_backend = "pipe"; pipe name = "/tmp/snapfifo" (alsa section fully commented out)  
-- Firewall (UFW): allow from 192.168.0.0/24 to 5000/tcp and 6000:6009/udp  
 Status:  
-- Native Music Assistant Snapcast integration active (players/groups discovered via control ports 1704/1705, dynamic TCP streams on 4953-5153)  
-- Perfect sub-millisecond synchronized playback verified across 4 Pi clients (radio/provider tests)  
-- AirPlay bridge retained as proven fallback (~2s latency)
+- Native Music Assistant Snapcast active (group "Shed-Snapcast-Group" with 4 Pi clients; perfect sync verified on radio/provider tests)  
+- AirPlay bridge retained as optional fallback
