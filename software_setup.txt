@@ -333,7 +333,13 @@
     - VNC: Enabled with password, port auto (e.g., 5900)
     - Boot Method: UEFI
     - Status: Installed and onboarded with basic setup; dashboard accessible at http://192.168.0.2:8123; stable at low resources (0% CPU idle, 0.6GB RAM); Advanced SSH & Web Terminal add-on configured with key-based access via username 'chocks' on port 22222 from CHOCKSMAINPC; Zigbee2MQTT add-on installed and connected to SLZB-06M coordinator (IP 192.168.0.12, port 6638, adapter ember, firmware OS v3.1.3, Zigbee 20250220); network formed and ready for device pairing.
-
+    - Add-ons: Music Assistant (latest stable, v2.7.5 confirmed in logs)
+      - Music Assistant Configuration:
+        - Player Provider: Snapcast (external server 192.168.0.9:1705, players snapclient1–4 discovered via mDNS, group "Shed-Snapcast-Group" created)
+        - Music Provider: YouTube Music (Premium account, authenticated via browser cookie/PO token method due to Google OAuth restrictions)
+        - Status: Provider active, library synced (artists/albums/tracks/playlists); some tracks unplayable (regional/premium restrictions); native Snapcast playback in progress (dynamic TCP streams, requires snapserver TCP listener)
+        - Web UI: http://192.168.0.2:8095 (setup completed, onboarding done)
+        
 Cloud Endpoints Setup:
 - **Netserver Service (Ubuntu systemd unit for netperf server on port 12865)**:
   [Unit]
