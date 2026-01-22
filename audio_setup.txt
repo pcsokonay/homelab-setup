@@ -112,14 +112,14 @@ Configurations (per client):
 Server (Beelink):  
 - snapserver v0.34.0  
 - Config:  
-  - Primary stream (Music Assistant native): tcp://0.0.0.0:5000?name=MusicAssistant&sampleformat=48000:16:2  
-  - Fallback stream (AirPlay bridge): pipe:///tmp/snapfifo?name=MultiSpeaker&sampleformat=44100:16:2&mode=create  
+  - Primary stream: Dynamic TCP ports (4953-5153) for Music Assistant native integration (lower latency, direct group control)  
+  - Fallback stream: pipe:///tmp/snapfifo?name=MultiSpeaker&sampleformat=44100:16:2&mode=create  
 - FIFO: /tmp/snapfifo (rw-rw-rw-) for AirPlay fallback  
 AirPlay Bridge (Beelink, fallback only):  
 - shairport-sync (apt package)  
 - Config (/etc/shairport-sync.conf): general name = "Homelab Multiroom"; output_backend = "pipe"; pipe name = "/tmp/snapfifo" (alsa section fully commented out)  
 - Firewall (UFW): allow from 192.168.0.0/24 to 5000/tcp and 6000:6009/udp  
 Status:  
-- Native Music Assistant Snapcast integration active (players/groups discovered, dynamic TCP streams)  
-- Perfect sub-millisecond synchronized playback verified (white noise + real music via AirPlay bridge fallback)  
-- Native MA playback tested (dynamic streams created, lower latency expected once TCP listener active)  
+- Native Music Assistant Snapcast integration active (players/groups discovered via control ports 1704/1705, dynamic TCP streams on 4953-5153)  
+- Perfect sub-millisecond synchronized playback verified across 4 Pi clients (radio/provider tests)  
+- AirPlay bridge retained as proven fallback (~2s latency)
