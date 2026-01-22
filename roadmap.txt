@@ -1,4 +1,4 @@
-# Home Server Roadmap - Updated January 16, 2026
+# Home Server Roadmap - Updated January 22, 2026
 
 ## Notes
 - Planned immediate next steps in order:
@@ -13,11 +13,6 @@
 - Bazarr for subtitles (focus on forced subs)
 - theme.park for UI themes (low priority)
 - Status: Not started
-
-## Integrate Snapcast
-- Synchronous multi-room audio for Music Assistant (YouTube Music provider)
-- 4x Raspberry Pi Zero 2 W clients with PCM5102A I2S DACs
-- Status: In progress
 
 ## Explore Tdarr for AV1 Transcoding
 - Library compression to save space

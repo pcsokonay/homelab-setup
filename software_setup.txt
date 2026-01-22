@@ -33,10 +33,11 @@
 
   - **Shairport-Sync** (AirPlay receiver for Snapcast integration):
     - Installation: apt package on Beelink (January 22, 2026)
-    - Config: /etc/shairport-sync.conf with alsa pipe output to /tmp/snapfifo
+    - Config: /etc/shairport-sync.conf with output_backend = "pipe"; pipe name = "/tmp/snapfifo" (alsa disabled)
     - Service: shairport-sync.service (enabled, running)
-    - Purpose: Pipe audio from Music Assistant AirPlay target to snapserver FIFO for synchronized multi-room playback
-    - Status: Installed and active; pipe configuration pending test
+    - Firewall: UFW rules for 5000/tcp and 6000:6009/udp from LAN
+    - Purpose: Pipe audio from Music Assistant (or any AirPlay sender) to snapserver FIFO for synchronized multi-room playback
+    - Status: Bridge fully tested with real music (January 22, 2026); perfect sync across 4 rooms
 
   - **Nextcloud**:
     - Installation: Docker (custom local/nextcloud:stable-apache with SMB support, merged into main stack on 02/JAN/2026, rebuilt 03/JAN/2026)
