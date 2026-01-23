@@ -111,13 +111,14 @@ Configurations (per client):
 - Systemd service: snapclient.service with ExecStart using tcp://beelink.local:1704 -s plughw:1,0  
 Server (Beelink):  
 - snapserver v0.34.0  
-- Config:  
-  - Primary: Dynamic TCP ports (4953-5153 open via UFW from 192.168.0.2) for Music Assistant native integration (direct group control, ~200-500ms latency)  
-  - Fallback stream: pipe:///tmp/snapfifo?name=MultiSpeaker&sampleformat=44100:16:2&mode=create  
+- Config (/etc/snapserver.conf):  
+  - No persistent stream entries required for primary (Music Assistant uses dynamic TCP streams on 4953-5153)  
+  - Fallback stream (optional, causes idle underrun beep when no data): pipe:///tmp/snapfifo?name=MultiSpeaker&sampleformat=44100:16:2&mode=create  
 - Firewall (UFW): Allow from 192.168.0.2 to 4953:5153/tcp (MA dynamic streams)  
 AirPlay Bridge (Beelink, fallback only):  
 - shairport-sync (apt package)  
 - Config (/etc/shairport-sync.conf): general name = "Homelab Multiroom"; output_backend = "pipe"; pipe name = "/tmp/snapfifo" (alsa section fully commented out)  
 Status:  
-- Native Music Assistant Snapcast active (group "Shed-Snapcast-Group" with 4 Pi clients; perfect sync verified on radio/provider tests)  
-- AirPlay bridge retained as optional fallback
+- Native Music Assistant Snapcast primary (group "Shed-Snapcast-Group" with 4 Pi clients; perfect sync on radio/dynamic streams, ~240ms client latency offset typical)  
+- AirPlay/MultiSpeaker fallback (~520ms latency offset, occasional clicking/distortion; idle underrun beep when no data flowing)  
+- Per-client latency adjustable in Snapweb (Clients tab) or Snapdroid for sync tuning
