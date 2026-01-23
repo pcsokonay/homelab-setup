@@ -12,6 +12,12 @@
   - **SMB Share**:
     - MediaShare (/mnt/media/media, mapped to Z: on Windows and /mnt/media on Beelink via nas-direct alias in /etc/hosts)
       - Note: TrueNAS sees full paths like /mnt/media/media/Media/TV_Series and /mnt/media/media/Media/Movies due to pool/dataset structure, while Beelink SMB mount omits the extra /media/ for /mnt/media/Media/TV_Series etc.
+  - **NFS Share** (added January 24, 2026 for Music library access):
+    - Path: /mnt/media/media/Media/Music
+    - Enabled: Yes
+    - Maproot User: root (allows client root/sudo read access after squashing removal)
+    - Networks: 192.168.0.0/24 (LAN only)
+    - Status: Mounts successfully on Beelink host (lists files as user or sudo); read-only practical with dataset ACLs
   - **Access**:
     - Web UI: http://192.168.0.8 (1-hour session timeout)
   - **Virtualization**:
