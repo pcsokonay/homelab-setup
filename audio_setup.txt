@@ -100,15 +100,16 @@ Preamp: 10 dB
 VSTPlugin: Library "C:\Program Files\VSTPlugins\ReaPlugs\reagate-standalone.dll" Hipass 0 Thresh 0.00562341 Attack 0.00467278 Release 0.20123 Pre-open 0.00762284 Hold 0.153719 Lowpass 1 SignIn 0 AudIn 0 Dry 0 Noise 0 Wet 1 Hystrsis 1 PreviewF 0 "RMS size" 0.147734 Usemidi 0 MidiNote 0.543307 MidiChan 0 InvrtWet 0
 
 ## Homelab Multi-Room Audio (Snapcast)  
-Date: January 23, 2026  
+Date: January 24, 2026  
 Hardware:  
 - 4x Raspberry Pi Zero 2 W (hostnames: snapclient1 to snapclient4, username: chocks)  
 - 4x PCM5102A I2S DAC Decoder boards (purple PCB, required solder bridges: back pads FLT-L normal latency, DEMP-L off, XSMT-H unmute, FMT-L I2S; front pads tie SCK low for internal PLL)  
-- 4x micro SD cards (Raspberry Pi OS Lite 64-bit)  
+- chocksmainpc (Windows 11, default output: Voicemeeter AUX Input for 5.1 upmix via NVIDIA HDMI to Pioneer VSX-523)  
 Configurations (per client):  
-- /boot/firmware/config.txt: dtparam=i2s=on and dtoverlay=hifiberry-dac  
+- Pi clients: /boot/firmware/config.txt: dtparam=i2s=on and dtoverlay=hifiberry-dac  
 - /etc/asound.conf: Default to hw card 1 (PCM5102A)  
 - Systemd service: snapclient.service with ExecStart using tcp://beelink.local:1704 -s plughw:1,0  
+- Windows client (chocksmainpc): Launched via Task Scheduler at logon (batch file snapclient.bat: start /high snapclient.exe --host 192.168.0.9 --port 1704; run whether user logged on or not, highest privileges, hidden)  
 Server (Beelink):  
 - snapserver v0.34.0  
 - Config (/etc/snapserver.conf):  
@@ -122,13 +123,12 @@ Control Apps:
 - Snapdroid (Android, official client for per-client volume/mute/latency adjustments; manual IPv4 connect preferred due to mDNS IPv6 priority)  
 - Snapweb (browser fallback)  
 Status:  
-- Native Music Assistant Snapcast primary (group "Shed-Snapcast-Group" with 4 Pi clients; perfect sync on radio/dynamic streams, ~240ms client latency offset typical)  
+- Native Music Assistant Snapcast primary (group "Shed-Snapcast-Group" with 4 Pi clients + chocksmainpc; ~193ms latency offset on Windows client, superior sync/quality/consistency vs prior Chromecast line-in—Arylic LP10/Chromecast deprecated for main room multi-room)  
 - AirPlay/MultiSpeaker fallback (~520ms latency offset; idle underrun beep disabled via high threshold)  
-- Per-client latency adjustable in Snapweb (Clients tab) or Snapdroid for sync tuning
-
-- Music Source: Navidrome (Subsonic API) integrated into Music Assistant as primary local library provider (added Jan 2026)
-  - Base URL: http://192.168.0.9:4533
-  - Streams lossless/direct to Shed-Snapcast-Group (4x Pi Zero 2 W clients) via dynamic TCP
-  - Features: Full library browse/search/playback in MA, quick UI response
-  - Scan: Hourly auto (@every 1h) + on startup for new Lidarr imports
-  - Status: Tested and working perfectly (multi-room sync, no lag/cutouts observed Jan 2026)
+- Per-client latency adjustable in Snapweb (Clients tab) or Snapdroid for sync tuning  
+- Music Source: Navidrome (Subsonic API) integrated into Music Assistant as primary local library provider (added Jan 2026)  
+  - Base URL: http://192.168.0.9:4533  
+  - Streams lossless/direct to Shed-Snapcast-Group via dynamic TCP  
+  - Features: Full library browse/search/playback in MA, quick UI response  
+  - Scan: Hourly auto (@every 1h) + on startup for new Lidarr imports  
+  - Status: Tested and working perfectly (multi-room sync, no lag/cutouts observed Jan 2026)  

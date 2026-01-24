@@ -1,7 +1,7 @@
 ## Clients
 - Pixel 7 Pro (Android 10, dynamic)
-- Chromecast (Google Cast, dynamic)
-- chocksmainpc: 192.168.0.7 (dynamic with Dnsmasq reservation, Windows with WSL Ubuntu, Tailnet IP 100.108.206.83)
+- Chromecast (Google Cast, dynamic—deprecated for main room multi-room)
+- chocksmainpc: 192.168.0.7 (dynamic with Dnsmasq reservation, Windows with WSL Ubuntu, Tailnet IP 100.108.206.83, Snapclient for multi-room audio—main room 5.1 via Voicemeeter AUX)
 - Csokonay: Dad's PC (192.168.30.3 reserved on NF18Mesh)
 - Beelink N150: 192.168.0.9 (static, Docker host)
 - TrueNAS Scale NAS: 192.168.0.8 (static with Dnsmasq reservation)
