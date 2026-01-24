@@ -105,8 +105,9 @@
     - Machine Type: q35
     - Networks: VirtIO (vtnet0 WAN, vtnet1 LAN, vtnet2 OPT1, OPT2 TAIL locked)
     - Auto-Start: Enabled
-    - Interfaces: WAN DHCP public IP; LAN static 192.168.0.1/24; OPT1 static 192.168.20.1/24; TAIL Tailscale plugin
+    - Interfaces: WAN DHCP public IP; LAN static 192.168.0.1/24; OPT1 static 192.168.0.1/24; TAIL Tailscale plugin
     - Security: OPT1 restricted (block OPT1 to LAN rule); Proxmox host firewall enabled
+  - Home Assistant: Dedicated NIC enp2s0: NAS_ETHERNET (bypasses LACP/bond1 for direct host access; no failover needed)
 
 ## **Netcomm NF18Mesh Modem**:
   - Location: Upstairs

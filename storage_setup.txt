@@ -12,19 +12,21 @@
   - **SMB Share**:
     - MediaShare (/mnt/media/media, mapped to Z: on Windows and /mnt/media on Beelink via nas-direct alias in /etc/hosts)
       - Note: TrueNAS sees full paths like /mnt/media/media/Media/TV_Series and /mnt/media/media/Media/Movies due to pool/dataset structure, while Beelink SMB mount omits the extra /media/ for /mnt/media/Media/TV_Series etc.
-  - **NFS Share** (added January 24, 2026 for Music library access):
+  - **NFS Share** (added for Music library access):
     - Path: /mnt/media/media/Media/Music
     - Enabled: Yes
-    - Maproot User: root (allows client root/sudo read access after squashing removal)
+    - Maproot User: root (allows client root/sudo read access)
     - Networks: 192.168.0.0/24 (LAN only)
-    - Status: Mounts successfully on Beelink host (lists files as user or sudo); read-only practical with dataset ACLs
+    - Status: Mounts successfully on Beelink host and HA VM; read-only practical with dataset ACLs
+  - **HA VM Mounts**:
+    - NFS fstab entry (on standby): 192.168.0.8:/mnt/media/media/Media/Music /mnt/music nfs nolock,vers=4 0 0 (ready for Music Assistant File provider or similar)
   - **Access**:
     - Web UI: http://192.168.0.8 (1-hour session timeout)
   - **Virtualization**:
     - Supported: Enabled in BIOS Security > Virtualization for VT-x/VT-d, GUI now confirms available
   - **Installed Apps and VMs**:
     - Apps: Scrutiny, Bazarr, Tdarr Node
-    - VMs: Home Assistant
+    - VMs: Home Assistant (NIC assigned to dedicated enp2s0: NAS_ETHERNET for improved connectivity; enables direct ping/mounts to TrueNAS host at 192.168.0.8)
   - **Hardware**:
     - Chassis: Lenovo M700 SFF (i5-6600, virtualization supported after BIOS enable for VT-x/VT-d)
     - HBA: Fujitsu D2607-A21 (firmware 20.00.07.00-IT, enabled)
