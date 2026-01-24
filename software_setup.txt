@@ -142,6 +142,16 @@
       - Categories: movies (save /downloads/complete/movies), tv (save /downloads/complete/tv), tl (save /downloads/complete/tl, tag tl_tracker), movies4k (save /downloads/complete/movies_4K)
       - Script: qb_port_sync.sh (syncs Proton port every 5 min via cron)
       - Configuration: Hardlinks disabled (use copies for striptracks compatibility)
+      
+    - **Navidrome** (Subsonic music server):
+      - Installation: Docker (deluan/navidrome:latest, port 4533, added Jan 2026)
+      - Compose: See docker-compose.yml service block
+      - Volumes: /mnt/media/Media/Music:/music:ro (Lidarr root), ./navidrome/data:/data (DB/cache)
+      - User: 1000:1000
+      - Environment: TZ=Australia/Sydney, ND_LOGLEVEL=info, ND_SCANNER_SCHEDULE=@every 1h (auto-rescan hourly), ND_SCANNER_ENABLED=true, ND_SCANNER_SCANONSTARTUP=true
+      - Purpose: Provides Subsonic/Open Subsonic API for Music Assistant library access and streaming to Snapcast
+      - Access: http://192.168.0.9:4533 (admin user setup on first login)
+      - Status: Running, integrated with Music Assistant
 
   - **Utilities**:
 
@@ -339,7 +349,7 @@
         - Music Provider: YouTube Music (Premium account, authenticated via browser cookie/PO token method due to Google OAuth restrictions)
         - Status: Provider active, library synced (artists/albums/tracks/playlists); some tracks unplayable (regional/premium restrictions); native Snapcast playback in progress (dynamic TCP streams, requires snapserver TCP listener)
         - Web UI: http://192.168.0.2:8095 (setup completed, onboarding done)
-        
+
 Cloud Endpoints Setup:
 - **Netserver Service (Ubuntu systemd unit for netperf server on port 12865)**:
   [Unit]

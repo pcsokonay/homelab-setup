@@ -125,3 +125,9 @@ Status:
 - Native Music Assistant Snapcast primary (group "Shed-Snapcast-Group" with 4 Pi clients; perfect sync on radio/dynamic streams, ~240ms client latency offset typical)  
 - AirPlay/MultiSpeaker fallback (~520ms latency offset; idle underrun beep disabled via high threshold)  
 - Per-client latency adjustable in Snapweb (Clients tab) or Snapdroid for sync tuning
+
+- Music Source: Navidrome (Subsonic API) integrated into Music Assistant as primary library provider (added Jan 2026)
+  - Base URL: http://192.168.0.9:4533
+  - Streams directly to Shed-Snapcast-Group (4x Pi clients) for multi-room sync
+  - Features: Full library browsing/search/playback in MA, lossless streaming support
+  - Scan: Hourly auto-rescan (@every 1h) catches new Lidarr adds quickly
