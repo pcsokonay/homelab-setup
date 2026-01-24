@@ -142,16 +142,16 @@
       - Categories: movies (save /downloads/complete/movies), tv (save /downloads/complete/tv), tl (save /downloads/complete/tl, tag tl_tracker), movies4k (save /downloads/complete/movies_4K)
       - Script: qb_port_sync.sh (syncs Proton port every 5 min via cron)
       - Configuration: Hardlinks disabled (use copies for striptracks compatibility)
-      
-    - **Navidrome** (Subsonic music server):
+
+    - **Navidrome** (Subsonic/OpenSubsonic music server):
       - Installation: Docker (deluan/navidrome:latest, port 4533, added Jan 2026)
-      - Compose: See docker-compose.yml service block
-      - Volumes: /mnt/media/Media/Music:/music:ro (Lidarr root), ./navidrome/data:/data (DB/cache)
+      - Container name: navidrome
       - User: 1000:1000
-      - Environment: TZ=Australia/Sydney, ND_LOGLEVEL=info, ND_SCANNER_SCHEDULE=@every 1h (auto-rescan hourly), ND_SCANNER_ENABLED=true, ND_SCANNER_SCANONSTARTUP=true
-      - Purpose: Provides Subsonic/Open Subsonic API for Music Assistant library access and streaming to Snapcast
-      - Access: http://192.168.0.9:4533 (admin user setup on first login)
-      - Status: Running, integrated with Music Assistant
+      - Volumes: /mnt/media/Media/Music:/music:ro (Lidarr root), ./navidrome/data:/data (DB/cache)
+      - Environment: TZ=Australia/Sydney, ND_LOGLEVEL=info, ND_SCANNER_SCHEDULE=@every 1h, ND_SCANNER_ENABLED=true, ND_SCANNER_SCANONSTARTUP=true
+      - Purpose: Lightweight Subsonic server for Music Assistant library access and lossless streaming to Shed-Snapcast-Group
+      - Access: http://192.168.0.9:4533 (admin user, strong password set)
+      - Status: Running, hourly auto-rescan, fully integrated with Music Assistant (tested playback Jan 2026)
 
   - **Utilities**:
 
