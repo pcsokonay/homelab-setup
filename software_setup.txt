@@ -143,6 +143,19 @@
       - Script: qb_port_sync.sh (syncs Proton port every 5 min via cron)
       - Configuration: Hardlinks disabled (use copies for striptracks compatibility)
 
+  - **Music Management**:
+
+    - **Lidarr**:
+      - Installation: Docker (linuxserver/lidarr:latest, port 8686:8686)
+      - Container name: lidarr
+      - Volumes: ./lidarr/config:/config, /mnt/media/Media:/media, /cache/downloads:/downloads
+      - Environment: PUID=1000, PGID=1000, TZ=Australia/Sydney
+      - Healthcheck: CMD-SHELL curl check on localhost:8686
+      - Root Folder: /media/Music
+      - Connected Apps: Prowlarr (indexers sync), qBittorrent[](http://qbittorrent:8080), SABnzbd[](http://sabnzbd:8085)
+      - Purpose: Automated music library management (artist monitoring, quality upgrades, new releases)
+      - Status: Running (added January 2026; populating library with mainstream/metal discographies)
+      
     - **Navidrome** (Subsonic/OpenSubsonic music server):
       - Installation: Docker (deluan/navidrome:latest, port 4533, added Jan 2026)
       - Container name: navidrome

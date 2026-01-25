@@ -7,12 +7,13 @@
 
 - Prioritise open-source, cost-effective solutions.
 
-## Explore *arr Apps
-- Evaluate Lidarr (music), Readarr (eBooks), Mylar3 (comics)
-- Jellyseerr for requests/discovery
-- Bazarr for subtitles (focus on forced subs)
-- theme.park for UI themes (low priority)
-- Status: Not started
+## Explore
+- *arr Apps
+  - Evaluate Readarr (eBooks), Mylar3 (comics)
+  - Jellyseerr for requests/discovery
+  - Bazarr for subtitles (focus on forced subs)
+  - theme.park for UI themes (low priority)
+  - Status: Not started
 
 ## Explore Tdarr for AV1 Transcoding
 - Library compression to save space
