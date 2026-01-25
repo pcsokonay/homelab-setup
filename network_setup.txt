@@ -128,9 +128,52 @@
   - shoddy88.duckdns.org (static response)
 
 ## **Firewall (Beelink UFW)**:
-  - Active
-  - Allowed Ports: 22, 8096, 7878, 8989, 9696, 8080/tcp, 8191/tcp, 3333, 3334/tcp+udp, 8265/tcp, 8266/tcp, 9705/tcp, 5004/tcp, 18080/tcp, 18081/tcp, 9999/tcp, 80/tcp, 443/tcp, 3001/tcp, 7879/tcp
-  - Specific Rules:
-    - Allow from 192.168.0.0/24 to any port 18081 proto tcp (Monero RPC local)
-    - Allow from 192.168.0.0/24 to any port 3001 proto tcp (Dashdot LAN access)
-    - Allow from 192.168.0.2 to any port 4953:5153 proto tcp (Music Assistant dynamic Snapcast streams)
+- Status: Active
+- Default policy: Deny incoming, allow outgoing
+- Rules (IPv4):
+  80/tcp                     ALLOW       Anywhere                        # Caddy external HTTP
+  443/tcp                    ALLOW       Anywhere                        # Caddy external HTTPS
+  8096/tcp                   ALLOW       Anywhere                        # Jellyfin direct access
+  5000/tcp                   ALLOW       192.168.0.0/24                  # Shairport-sync control (AirPlay bridge)
+  6000:6009/udp              ALLOW       192.168.0.0/24                  # Shairport-sync timing ports
+  1704:1705/tcp              ALLOW       192.168.0.0/24                  # Snapserver audio streams + control (multi-room)
+  5010/tcp                   ALLOW       192.168.0.2                     # Legacy Snapserver TCP stream (kept for compatibility)
+  4953:5153/tcp              ALLOW       192.168.0.2                     # Dynamic Snapcast ports from Home Assistant/Music Assistant
+  8686/tcp                   ALLOW       192.168.0.0/24                  # Lidarr web UI
+  7878/tcp                   ALLOW       192.168.0.0/24                  # Radarr web UI
+  7879/tcp                   ALLOW       192.168.0.0/24                  # Radarr4K web UI
+  8989/tcp                   ALLOW       192.168.0.0/24                  # Sonarr web UI
+  9696/tcp                   ALLOW       192.168.0.0/24                  # Prowlarr web UI
+  8080/tcp                   ALLOW       192.168.0.0/24                  # qBittorrent web UI
+  8085/tcp                   ALLOW       192.168.0.0/24                  # SABnzbd web UI
+  8265/tcp                   ALLOW       192.168.0.0/24                  # Tdarr web UI
+  8266/tcp                   ALLOW       192.168.0.0/24                  # Tdarr server communication
+  1704/tcp                   ALLOW       192.168.0.0/24                  # Snapserver audio streams (duplicate for explicitness)
+  5201/tcp                   ALLOW       192.168.0.0/24                  # iperf3 testing (LAN only)
+  22/tcp                     ALLOW       192.168.0.0/24                  # SSH from LAN only (key authentication)
+  Samba                      ALLOW       192.168.0.0/24                  # SMB shares on Beelink
+- Rules (IPv6):
+  [22] 8096 (v6)                  ALLOW IN    Anywhere (v6)
+  [23] 443 (v6)                   ALLOW IN    Anywhere (v6)
+  [24] 80/tcp (v6)                ALLOW IN    Anywhere (v6)              # Caddy external HTTP
+  [25] 443/tcp (v6)               ALLOW IN    Anywhere (v6)              # Caddy external HTTPS
+  [26] 8096/tcp (v6)              ALLOW IN    Anywhere (v6)              # Jellyfin direct access
+  [27] 22/tcp                     ALLOW IN    2403:5807:8d14:11::/64     # SSH LAN IPv6
+  [28] 8686/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Lidarr IPv6 LAN
+  [29] 7878/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Radarr IPv6 LAN
+  [30] 7879/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Radarr4K IPv6 LAN
+  [31] Samba (v6)                 ALLOW IN    2403:5807:8d14:11::/64     # SMB IPv6 LAN
+  [32] 8989/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Sonarr IPv6 LAN
+  [33] 9696/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Prowlarr IPv6 LAN
+  [34] 8080/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # qBittorrent IPv6 LAN
+  [35] 8085/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # SABnzbd IPv6 LAN
+  [36] 8265/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Tdarr IPv6 LAN
+  [37] 1704:1705/tcp              ALLOW IN    2403:5807:8d14:11::/64     # Snapserver IPv6 LAN
+  [38] 5000/tcp                   ALLOW IN    2403:5807:8d14:11::/64     # Shairport-sync IPv6 LAN
+  [39] 6000:6009/udp              ALLOW IN    2403:5807:8d14:11::/64     # Shairport-sync timing IPv6 LAN
+- Notes:
+  - All non-public services restricted to LAN for security.
+  - External access via Caddy on 443 (preferred) or direct Jellyfin on 8096.
+  - Removed all obsolete/duplicates/unused ports during January 2026 cleanup.
+  - qBittorrent incoming torrent ports handled via VPN provider forwarding (qb_port_sync.sh cron)—no local UFW rule needed.
+  - IPv6: Currently many broad Anywhere (v6) rules—recommend restricting non-80/443 to LAN prefix 2403:5807:8d14:11::/64 (gradual steps below).
