@@ -410,8 +410,8 @@ Cloud Endpoints Setup:
 - **Purpose**: Natural-language interface for homelab tasks (Docker Compose generation/editing, file ops, system queries) with full shell context + 4090 inference speed.
 - **Notes**: safe_mode ask for manual code approval; ignore semgrep/xdg-open errors (headless/server-normal); large context handles full compose files.
 
-  - **Local AI Assistant**:
-    - OpenInterpreter client on Beelink (virtualenv ~/oi_env)
-    - Remote Ollama on chocksmainpc (gemma3:27b primary)
-    - Launcher: alias localai (profile-based for reliability)
-    - Details: See localai_setup.txt
+- **Local AI Assistant**:
+  - OpenInterpreter client (virtualenv ~/oi_env, profile-based remote access)
+  - Remote Ollama on chocksmainpc (gemma3:27b primary)
+  - Launcher: alias localai
+  - Details: See localai_setup.txt
