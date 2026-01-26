@@ -9,13 +9,12 @@
     - /usr/local/bin/striptracks_batch.sh: Used to run striptracks on entire media library
     - ~/docker-homelab/SABnzbd/config/scripts/sab_combined.sh: Runs striptracks on media downloaded through SABnzbd
     - ~/docker-homelab/wait-for-nas.sh: Ensures that the NAS is correctly mounted after boot (avoids boot race issues)
-    - ~/docker-homelab/qb_port_sync.sh: Syncs the vpn port with qbittorrent every 5 minutes for port forwarding
+    - ~/docker-homelab/qb_port_sync.sh: Syncs the vpn port with qbittorrent every 5 minutes for port forwarding - not in use atm.
     - ~/docker-homelab/stack-health-check.sh: Monitors stack health via escalating curls on Radarr/Sonarr/qBittorrent ports; restarts compose on failure and loops until success (30s sleep, reduced logging to issues only; infinite retries; tested and live) 
       - Logs: To /var/log/stack-health.log
       - Service: Turned into a system service at /etc/systemd/system/stack-health.service
 
   - **Crontab**:
-    - */5 * * * * /home/chocks/docker-homelab/qb_port_sync.sh
     - 0 3 * * * /home/chocks/docker-homelab/jellyfin_backup.sh
     - 0 * * * * find /cache/downloads/complete -type d -name '_FAILED_*' -empty -exec rm -rf {} \;
     - 0 3 * * * /home/chocks/truncate-nas-log.sh 
@@ -147,13 +146,13 @@
       - API Key: 159ef74f1fa24ecf9d727f5b4da11061
 
     - **qBittorrent**:
-      - Installation: Docker (linuxserver/qbittorrent:latest, port 8080)
-      - Volumes: /cache/downloads:/downloads, ./qbittorrent/config:/config, /mnt/media/downloads/watch:/watch, /mnt/media:/mnt/media
-      - Environment: PUID/PGID=1000, TZ=Australia/Sydney, WEBUI_PORT=8080, RADARR_URL=http://radarr:7878, RADARR_API_KEY=fef1037838694caabbdbfcc98b4f9ee3
-      - Healthcheck: CMD-SHELL with curls
-      - Categories: movies (save /downloads/complete/movies), tv (save /downloads/complete/tv), tl (save /downloads/complete/tl, tag tl_tracker), movies4k (save /downloads/complete/movies_4K)
-      - Script: qb_port_sync.sh (syncs Proton port every 5 min via cron)
-      - Configuration: Hardlinks disabled (use copies for striptracks compatibility)
+      - Installation: Docker (likely linuxserver/qbittorrent or similar, in main stack)
+      - Ports: Published 8080:8080 (web UI), 6881:6881 and 6881:6881/udp (P2P listening—required for incoming connections and green status)
+      - Volumes: Standard config/downloads mapping (e.g., ./qbittorrent:/config, /cache/downloads:/downloads)
+      - Environment: PUID/PGID=1000, TZ=Australia/Sydney, WEBUI_PORT=8080
+      - Connection Settings: Listening port 6881, UPnP/NAT-PMP disabled (manual forwarding)
+      - Status: Direct home forwarding active (no VPN container); port publishing added for incoming peers
+      - Notes: Removed Gluetun integration; qb_port_sync.sh obsolete and removed
 
   - **Music Management**:
 
@@ -398,20 +397,7 @@ Cloud Endpoints Setup:
   - Save: sudo netfilter-persistent save
   - Verify: sudo iptables -L INPUT -n -v --line-numbers (shows pkts/bytes counters for hits; reset with sudo iptables -Z)
 
-## Local CLI AI Assistant (GPU-Accelerated)
-- **Central Server (chocksmainpc Windows)**:
-  - Ollama: Native Windows app (v0.13.x+), CUDA-enabled for GTX 4090.
-  - Models: gemma3:27b (primary, 128K context), llama3.1:70b (heavy), llama3.2:3b (light).
-  - API: Exposed on 0.0.0.0:11434 with /v1 OpenAI compat endpoint (Tailscale-secured).
-  - Run: Tray app on startup.
-- **CLI Agent (Open Interpreter v0.4.x)**:
-  - Local (Windows): Python 3.12.10; launch via batch interpreter --safe_mode ask --model ollama/gemma3:27b --context_window 131072.
-  - Remote Thin Client (Beelink Ubuntu): Virtualenv ~/oi_env; alias localai sources venv + interpreter --safe_mode ask --model gemma3:27b --api_base http://100.108.206.83:11434/v1 --context_window 131072.
-- **Purpose**: Natural-language interface for homelab tasks (Docker Compose generation/editing, file ops, system queries) with full shell context + 4090 inference speed.
-- **Notes**: safe_mode ask for manual code approval; ignore semgrep/xdg-open errors (headless/server-normal); large context handles full compose files.
-
-- **Local AI Assistant**:
-  - OpenInterpreter client (virtualenv ~/oi_env, profile-based remote access)
-  - Remote Ollama on chocksmainpc (gemma3:27b primary)
-  - Launcher: alias localai
-  - Details: See localai_setup.txt
+- **Local AI Assistant**: - I gave up on this, its shithouse!
+  - OpenInterpreter client (remote Ollama on chocksmainpc, llama3.1:70b for large context/full outputs)
+  - Launcher: alias localai (strict concise prompt)
+  - Details: See local_ai_setup.txt

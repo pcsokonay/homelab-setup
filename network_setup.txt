@@ -13,6 +13,7 @@
 
 ## **Port Forwarding** (Direct on OPNsense WAN):
   - TCP 80/443 → 192.168.0.9:80/443 (Caddy/Jellyfin external access)
+  - TCP/UDP 6881 → 192.168.0.9:6881 (qBittorrent incoming peers, direct/no VPN)
 
 ## **DHCP**:
   - Backend: Dnsmasq (migrated for integrated DHCP + local DNS hostname registration)
