@@ -10,7 +10,7 @@ Ollama Server (chocksmainpc):
 - Primary model: gemma3:27b (fast reasoning/tool-use).
 
 OpenInterpreter Client (Beelink - Ubuntu Server 24.04.3):
-- Virtualenv: ~/oi_env
+- Virtualenv: ~/oi_env (latest open-interpreter via pip)
 - Profile: ~/.config/open-interpreter/profiles/beelink.yaml (YAML format)
 - Launcher script: ~/localai_launcher.sh (executable)
 - Alias: localai (in ~/.bashrc → points to the script)
@@ -45,13 +45,14 @@ system_message: |
 Launcher script content (exact - ~/localai_launcher.sh):
 #!/bin/bash
 source ~/oi_env/bin/activate
-interpreter --profile ~/.config/open-interpreter/profiles/beelink.yaml
+interpreter --local --profile ~/.config/open-interpreter/profiles/beelink.yaml
 
 Notes:
-- One-time profile migration prompt: Safe to answer 'y' (updates to current YAML format, no data loss).
+- One-time profile migration prompt: Safe to answer 'y'.
+- OpenAI API key prompts: Fixed with --local flag (forces Ollama mode).
 - pkg_resources warning: Harmless deprecation notice.
 - For larger context needs: Edit YAML → model: llama3.1:70b and context_window: 128000 (test inference speed first).
-- LiteLLM API key warnings fixed via api_key: dummy.
-- Profiles avoid CLI parsing issues with long prompts.
+- LiteLLM/OpenAI checks bypassed via --local and api_key: dummy.
+- Ignore system_message override warning – custom prompt essential for conciseness.
 
 Last updated: January 2026

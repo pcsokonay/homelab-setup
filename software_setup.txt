@@ -409,3 +409,9 @@ Cloud Endpoints Setup:
   - Remote Thin Client (Beelink Ubuntu): Virtualenv ~/oi_env; alias localai sources venv + interpreter --safe_mode ask --model gemma3:27b --api_base http://100.108.206.83:11434/v1 --context_window 131072.
 - **Purpose**: Natural-language interface for homelab tasks (Docker Compose generation/editing, file ops, system queries) with full shell context + 4090 inference speed.
 - **Notes**: safe_mode ask for manual code approval; ignore semgrep/xdg-open errors (headless/server-normal); large context handles full compose files.
+
+  - **Local AI Assistant**:
+    - OpenInterpreter client on Beelink (virtualenv ~/oi_env)
+    - Remote Ollama on chocksmainpc (gemma3:27b primary)
+    - Launcher: alias localai (profile-based for reliability)
+    - Details: See localai_setup.txt
