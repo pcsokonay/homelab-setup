@@ -70,6 +70,18 @@
       - Restart: unless-stopped
       - Config: Path translators in Tdarr_Server_Config.json for /media/Media to /library/Media
 
+    - **Tdarr Inform** (Bridge for Sonarr/Radarr notifications on Tdarr transcode completion):
+      - Installation: Docker (ghcr.io/deathbybandaid/tdarr_inform:latest)
+      - Container name: tdarr_inform
+      - Network: host (direct host networking—no bridge isolation)
+      - Ports: 5004:5004
+      - Volumes: ./tdarr_inform/config:/config
+      - Environment: PUID=1000, PGID=1000, TZ=Australia/Sydney
+      - User: "1000:1000"
+      - Restart: unless-stopped
+      - Firewall: UFW rules for 5004/tcp (LAN 192.168.0.0/24, Docker bridge 172.16.0.0/12, IPv6 LAN 2403:5807:8d14:11::/64)
+      - Status: Fully working (tested Sonarr/Radarr connection and test events successful, January 26, 2026)
+
     - **Jellyfin**:
       - Installation: Docker (jellyfin/jellyfin:latest, ports 8096, 7359/udp, version updated to latest on 16/NOV/2025)
       - Volumes: /mnt/media:/media:ro, ./jellyfin/config:/config, ./jellyfin/cache:/cache
@@ -155,7 +167,7 @@
       - Connected Apps: Prowlarr (indexers sync), qBittorrent[](http://qbittorrent:8080), SABnzbd[](http://sabnzbd:8085)
       - Purpose: Automated music library management (artist monitoring, quality upgrades, new releases)
       - Status: Running (added January 2026; populating library with mainstream/metal discographies)
-      
+
     - **Navidrome** (Subsonic/OpenSubsonic music server):
       - Installation: Docker (deluan/navidrome:latest, port 4533, added Jan 2026)
       - Container name: navidrome
