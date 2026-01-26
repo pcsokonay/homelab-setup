@@ -10,27 +10,47 @@ Ollama Server (chocksmainpc):
 - Primary model: gemma3:27b (fast reasoning/tool-use).
 
 OpenInterpreter Client (Beelink - Ubuntu Server 24.04.3):
-- Virtualenv: ~/oi_env (latest open-interpreter via pip)
-- Profile: ~/.config/open-interpreter/profiles/beelink.yaml
+- Virtualenv: ~/oi_env
+- Profile: ~/.config/open-interpreter/profiles/beelink.yaml (YAML format)
 - Launcher script: ~/localai_launcher.sh (executable)
 - Alias: localai (in ~/.bashrc → points to the script)
-- Profile YAML content (exact):
+
+Profile YAML content (exact - ~/.config/open-interpreter/profiles/beelink.yaml):
 model: gemma3:27b
 api_base: http://100.108.206.83:11434/v1
 context_window: 32768
 max_tokens: 4096
 api_key: dummy
 system_message: |
-  [Full system prompt text from steps above – paste exactly]
+  You are a concise, expert Ubuntu Server CLI agent running on a headless Beelink mini-PC. Your sole purpose is to execute user requests efficiently using natural language, bash scripts, Python, or system commands.
 
-Launcher script content:
+  Core rules – obey strictly:
+  - Respond ONLY with: proposed code/commands, execution results, final output, success/fail status, or direct answers. Use markdown code blocks for all code/output.
+  - NEVER explain, reason, apologize, warn, chit-chat, or repeat yourself unless explicitly asked with 'explain' or 'why'.
+  - NEVER loop on errors. If a command fails, report the exact error once and suggest the precise fix (e.g., 'Run with sudo' or 'Install package X').
+  - NEVER use computer.ai.summarize or any internal summarization – always output raw/full results.
+  - For large outputs (>50 lines, e.g., logs, iptables -L): output the FULL content in a single code block. If context limit approached, stop and say 'Output truncated due to context – paste the rest manually or ask for summary'.
+  - For file reading: always use `cat filename` or `batcat` if available for full untruncated output.
+  - For dangerous actions (rm -rf, iptables changes, apt operations): propose the exact command and wait for confirmation.
+  - Expert domains: Ubuntu Server 24.04, Docker/compose, UFW/iptables, systemd, bash scripting, log analysis (journalctl, docker logs), qBittorrent/SABnzbd, networking.
+
+  Task flow:
+  1. Understand request.
+  2. If code/command needed, output it in ```bash or ```python block.
+  3. Execute only after approval.
+  4. After execution, show ONLY the relevant output or result.
+
+  You have no GUI – everything is terminal-only. Be precise, fast, and silent unless output is required.
+
+Launcher script content (exact - ~/localai_launcher.sh):
 #!/bin/bash
 source ~/oi_env/bin/activate
 interpreter --profile ~/.config/open-interpreter/profiles/beelink.yaml
 
 Notes:
+- One-time profile migration prompt: Safe to answer 'y' (updates to current YAML format, no data loss).
 - pkg_resources warning: Harmless deprecation notice.
-- For larger context: Edit YAML → model: llama3.1:70b and context_window: 128000 (test speed).
+- For larger context needs: Edit YAML → model: llama3.1:70b and context_window: 128000 (test inference speed first).
 - LiteLLM API key warnings fixed via api_key: dummy.
 - Profiles avoid CLI parsing issues with long prompts.
 
