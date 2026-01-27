@@ -132,3 +132,13 @@ Status:
   - Features: Full library browse/search/playback in MA, quick UI response  
   - Scan: Hourly auto (@every 1h) + on startup for new Lidarr imports  
   - Status: Tested and working perfectly (multi-room sync, no lag/cutouts observed Jan 2026)  
+
+## Soulseek Integration (Rare/Obscure Music Automation)  
+Date: January 28, 2026  
+- slskd container deployed for Soulseek P2P network access  
+- Shares: Read-only /mnt/media/Media/Music (~1281 files for upload credit/priority)  
+- Downloads: /cache/soulseek/complete (future Lidarr import path) / incomplete  
+- Active mode enabled (OPNsense port forward TCP 50300) → proven incoming uploads  
+- Purpose: Fills gaps in Lidarr Wanted (old/rare/lossless not on torrents/Usenet)  
+- Next: Potential Soularr bridge for automated searching/downloading/import to Lidarr  
+- Status: Stable and active; manual searches/downloads tested

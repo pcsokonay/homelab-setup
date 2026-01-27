@@ -154,6 +154,18 @@
       - Status: Direct home forwarding active (no VPN container); port publishing added for incoming peers
       - Notes: Removed Gluetun integration; qb_port_sync.sh obsolete and removed
 
+    - **slskd** (Soulseek client/daemon for rare/obscure music):
+      - Installation: Docker (slskd/slskd:latest, bridge network)
+      - Container name: slskd
+      - Ports: 5030:5030 (web UI/API), 50300:50300 (active incoming)
+      - Volumes: ./slskd/config:/app, /cache/soulseek/complete:/soulseek/complete, /cache/soulseek/incomplete:/soulseek/incomplete, /mnt/media/Media/Music:/music:ro
+      - Environment: TZ=Australia/Sydney, SLSKD_REMOTE_CONFIGURATION=true
+      - User: 1000:1000
+      - Config (/app/slskd.yml): global no_ipv6: true; web HTTPS disabled + port 5030; shares /music (~1281 files for upload credit); Soulseek credentials set; directories downloads/complete mapped
+      - Access: http://192.168.0.9:5030 (LAN; default creds changed, API key generated)
+      - Active mode: Port 50300 forwarded on OPNsense for direct incoming (faster transfers/priority)
+      - Status: Stable (January 28, 2026); complements Lidarr for torrents/Usenet-missing rare releases
+ 
   - **Music Management**:
 
     - **Lidarr**:
@@ -279,7 +291,7 @@
       - Restart: unless-stopped
       - Caddyfile: Configured with reverse proxies for jellyfin.csokonay.online:8096, sonarr.csokonay.online:8989, prowlarr.csokonay.online:9696, radarr.csokonay.online:7878 (with timeouts/header tweaks)
       - Access: https://jellyfin.csokonay.online (and others; certs via Let's Encrypt, valid until ~Feb 2026; external access tested and working)
-
+     
   - **Privacy and Crypto**:
 
     - **Tor and Monero Setup (Separate Compose)**:
@@ -401,3 +413,4 @@ Cloud Endpoints Setup:
   - OpenInterpreter client (remote Ollama on chocksmainpc, llama3.1:70b for large context/full outputs)
   - Launcher: alias localai (strict concise prompt)
   - Details: See local_ai_setup.txt
+
