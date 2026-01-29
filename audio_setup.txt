@@ -142,3 +142,13 @@ Date: January 28, 2026
 - Purpose: Fills gaps in Lidarr Wanted (old/rare/lossless not on torrents/Usenet)  
 - Next: Potential Soularr bridge for automated searching/downloading/import to Lidarr  
 - Status: Stable and active; manual searches/downloads tested
+
+## Music Library Automation Workflow (Lidarr + Aurral + Soularr + slskd)  
+Date: January 29, 2026  
+- Primary Interface: Aurral[](http://192.168.0.9:3000) → MusicBrainz-powered search, library-based recommendations, similar artists, high-quality Last.fm artwork  
+- Requests: One-click add/monitor artists in Lidarr (no native Lidarr searches triggered)  
+- Lidarr Config: Indexers disabled (Prowlarr link off), download clients removed → prevents conflicts/duplicates  
+- Grabbing: Fully delegated to Soularr → monitors Lidarr Wanted, searches via slskd, downloads to /cache/soulseek/complete, imports cleanly  
+- Discovery Flow: Aurral for browsing/requests → Lidarr metadata/wanted → Soularr + slskd for rare/lossless fulfillment  
+- Playback: Navidrome library → Music Assistant → Snapcast multi-room group  
+- Status: End-to-end tested and stable—no indexer grabs, clean monitoring, excellent discovery/artwork

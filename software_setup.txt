@@ -140,6 +140,16 @@
       - Indexers: TorrentLeech (API key 3d3a5c1a-0a00-4b0e-8f0a-0a00-4b0e-8f0a, categories 1/8/9/11/12/13/14/17/19/20/21/26/27/28/29/30/31/32/35/43, seed ratio/time 1.5/10d)
       - Integration: Bypassr for Cloudflare (http://bypassr:8191, test run successful)
       - Sync: With Sonarr/Radarr (level 2, auto tag enabled)
+    
+    - **Aurral** (Music discovery/request interface for Lidarr):
+      - Installation: Docker Compose (separate stack in ~/docker-homelab/aurral, cloned from https://github.com/lklynet/aurral v0.10.0, Jan 2026)
+      - docker-compose.yml: Source build (frontend:80 → host 3000; backend:3001 internal only, no host port exposed)
+      - Volumes: ./backend/data:/app/data (persistent)
+      - Environment: Via .env file (LIDARR_URL=http://192.168.0.9:8686, LIDARR_API_KEY=[redacted], CONTACT_EMAIL=[user email], LASTFM_API_KEY=[redacted for better artist images], optional AUTH_PASSWORD=[strong password])
+      - Network: Default bridge (backend reachable via service name)
+      - Access: http://192.168.0.9:3000 (LAN-only, basic auth recommended)
+      - Firewall: UFW allow from 192.168.0.0/24 to port 3000
+      - Status: Fully working (Jan 29, 2026)—library sync, MusicBrainz search, recommendations, one-click monitor/add to Lidarr
 
   - **Downloaders**:
     - **SABnzbd**:
