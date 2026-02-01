@@ -13,11 +13,12 @@
     - ~/docker-homelab/stack-health-check.sh: Monitors stack health via escalating curls on Radarr/Sonarr/qBittorrent ports; restarts compose on failure and loops until success (30s sleep, reduced logging to issues only; infinite retries; tested and live) 
       - Logs: To /var/log/stack-health.log
       - Service: Turned into a system service at /etc/systemd/system/stack-health.service
-  - **Cleanup Scripts**:
-    - **soulseek_cleanup.sh** (updated Feb 2026):
-      - Targets source paths directly
+    - **soulseek_cleanup.sh** (updated February 2026):
+      - Location: ~/docker-homelab/soulseek_cleanup.sh
+      - Targets: Direct source paths (/cache/soulseek/complete and /cache/soulseek/incomplete)
       - Deletes: complete >6h, failed_imports contents >24h, incomplete >7d
       - Cron: Every 6 hours
+      - Status: Running without errors; no sudo required for most operations due to uid consistency
 
   - **Crontab**:
     - 0 3 * * * /home/chocks/docker-homelab/jellyfin_backup.sh
@@ -174,23 +175,25 @@
     - **slskd** (Soulseek P2P client):
       - Image: slskd/slskd:latest
       - Volumes: ./slskd/config:/app, /cache/soulseek/complete:/soulseek/complete, /cache/soulseek/incomplete:/soulseek/incomplete, /mnt/media/Media/Music:/music:ro
-      - user: "1000:1000" (with PUID=1000, PGID=1000)
+      - user: "1000:1000" (with supporting PUID=1000, PGID=1000 environment variables)
       - Environment: SLSKD_REMOTE_CONFIGURATION=true, SLSKD_FILESYSTEM__UMASK=0000, SLSKD_FILESYSTEM__FILE_PERMISSIONS="0666", SLSKD_FILESYSTEM__DIRECTORY_PERMISSIONS="0777"
-      - Ports: 5030, 50300
-      - Status: Stable with native host uid ownership (Feb 2026; direct volumes)
+      - Ports: 5030 (web UI), 50300 (active incoming)
+      - Status: Stable with native host uid ownership on shared volumes (February 2026; bindfs permission layer removed, direct source volumes for Soularr/Lidarr)
 
-    - **Soularr** (slskd → Lidarr automation):
+    - **Soularr** (slskd → Lidarr automation bridge):
       - Image: mrusse08/soularr:latest
       - user: 1000:1000
       - Volumes: ./soularr:/data, /cache/soulseek/complete:/soulseek/complete (direct source)
-      - Environment: SCRIPT_INTERVAL=120 (adjust higher for prod)
-      - Status: Fully automated imports (direct source Feb 2026)
+      - Environment: SCRIPT_INTERVAL=120 (raise to 300-600 for production)
+      - Status: Fully automated imports via direct source path (February 2026)
 
-    - **Lidarr** (Music management):
+    - **Lidarr** (Music library management):
       - Image: linuxserver/lidarr:latest
       - Volumes: ./lidarr/config:/config, /mnt/media/Media:/media, /cache/downloads:/downloads, /cache/soulseek/complete:/soulseek/complete (direct source)
-      - Environment: PUID=1000, PGID=1000
-      - Status: Integrated with Soularr (direct slskd path Feb 2026)
+      - Environment: PUID=1000, PGID=1000, TZ=Australia/Sydney
+      - Status: Integrated with Soularr via direct slskd completion path (February 2026)
+
+    
 
   - **Utilities**:
 
