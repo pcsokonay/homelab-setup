@@ -14,11 +14,10 @@
       - Logs: To /var/log/stack-health.log
       - Service: Turned into a system service at /etc/systemd/system/stack-health.service
   - **Cleanup Scripts**:
-    - **soulseek_cleanup.sh** (periodic cache maintenance):
-      - Location: ~/docker-homelab/soulseek_cleanup.sh
-      - Purpose: Deletes old/stale Soulseek downloads (complete >6h, failed_imports >24h, incomplete >7d) to keep cache transient
-      - Cron: Every 6 hours (0 */6 * * *)
-      - Status: Recommended for reliability (January 29, 2026)
+    - **soulseek_cleanup.sh** (updated Feb 2026):
+      - Targets source paths directly
+      - Deletes: complete >6h, failed_imports contents >24h, incomplete >7d
+      - Cron: Every 6 hours
 
   - **Crontab**:
     - 0 3 * * * /home/chocks/docker-homelab/jellyfin_backup.sh
@@ -170,67 +169,28 @@
       - Status: Direct home forwarding active (no VPN container); port publishing added for incoming peers
       - Notes: Removed Gluetun integration; qb_port_sync.sh obsolete and removed
 
-    - **slskd** (Soulseek client/daemon for rare/obscure music):
-      - Installation: Docker (slskd/slskd:latest, bridge network)
-      - Container name: slskd
-      - Ports: 5030:5030 (web UI/API), 50300:50300 (active incoming)
-      - Volumes: ./slskd/config:/app, /cache/soulseek/complete:/soulseek/complete, /cache/soulseek/incomplete:/soulseek/incomplete, /mnt/media/Media/Music:/music:ro
-      - Environment: TZ=Australia/Sydney, SLSKD_REMOTE_CONFIGURATION=true
-      - User: 1000:1000
-      - Config (/app/slskd.yml): global no_ipv6: true; web HTTPS disabled + port 5030; shares /music (~1281 files for upload credit); Soulseek credentials set; directories downloads/complete mapped
-      - Access: http://192.168.0.9:5030 (LAN; default creds changed, API key generated)
-      - Active mode: Port 50300 forwarded on OPNsense for direct incoming (faster transfers/priority)
-      - Status: Stable (January 28, 2026); complements Lidarr for torrents/Usenet-missing rare releases
- 
   - **Music Management**:
 
-    - **slskd** (Soulseek client/daemon for rare/obscure music):
-      - Installation: Docker (slskd/slskd:latest, bridge network)
-      - Container name: slskd
-      - Ports: 5030:5030 (web UI/API), 50300:50300 (active incoming)
+    - **slskd** (Soulseek P2P client):
+      - Image: slskd/slskd:latest
       - Volumes: ./slskd/config:/app, /cache/soulseek/complete:/soulseek/complete, /cache/soulseek/incomplete:/soulseek/incomplete, /mnt/media/Media/Music:/music:ro
-      - Environment: TZ=Australia/Sydney, SLSKD_REMOTE_CONFIGURATION=true, SLSKD_FILESYSTEM__UMASK=0000, SLSKD_FILESYSTEM__FILE_PERMISSIONS="0666", SLSKD_FILESYSTEM__DIRECTORY_PERMISSIONS="0777"
-      - Config (/app/slskd.yml): global no_ipv6: true; web HTTPS disabled + port 5030; shares /music (~1281 files for upload credit); Soulseek credentials set; directories downloads/complete mapped
-      - Access: http://192.168.0.9:5030 (LAN; default creds changed, API key generated)
-      - Active mode: Port 50300 forwarded on OPNsense for direct incoming (faster transfers/priority)
-      - Status: Stable (January 29, 2026); complements Lidarr for torrents/Usenet-missing rare releases; permissions forced via bindfs view for reliable Lidarr/Soularr access
+      - user: "1000:1000" (with PUID=1000, PGID=1000)
+      - Environment: SLSKD_REMOTE_CONFIGURATION=true, SLSKD_FILESYSTEM__UMASK=0000, SLSKD_FILESYSTEM__FILE_PERMISSIONS="0666", SLSKD_FILESYSTEM__DIRECTORY_PERMISSIONS="0777"
+      - Ports: 5030, 50300
+      - Status: Stable with native host uid ownership (Feb 2026; direct volumes)
 
-    - **Soularr** (Automation bridge for slskd → Lidarr imports):
-      - Installation: Docker (mrusse08/soularr:latest)
-      - Container name: soularr
-      - Volumes: ./soularr:/data, /cache/soulseek/complete_forced:/soulseek/complete (bindfs forced-permission view)
-      - Environment: TZ=Australia/Sydney, SCRIPT_INTERVAL=120
-      - Config (/data/config.ini): Slskd/Lidarr API keys/URLs; download_dir=/soulseek/complete; allowed_filetypes preferring lossless then 320kbps MP3; poll_time_minutes=10; number_of_albums_to_grab=3-5
-      - Purpose: Polls Lidarr missing → searches/queues slskd → targeted import on completion (hands-off rare/obscure fills)
-      - Status: Fully automated (January 29, 2026); bindfs enables reliable folder rename + move/delete
+    - **Soularr** (slskd → Lidarr automation):
+      - Image: mrusse08/soularr:latest
+      - user: 1000:1000
+      - Volumes: ./soularr:/data, /cache/soulseek/complete:/soulseek/complete (direct source)
+      - Environment: SCRIPT_INTERVAL=120 (adjust higher for prod)
+      - Status: Fully automated imports (direct source Feb 2026)
 
-    - **Bindfs Permission Layer** (for /cache/soulseek/complete):
-      - Installation: apt package bindfs
-      - Mount: /cache/soulseek/complete → /cache/soulseek/complete_forced (fstab entry: fuse.bindfs force-user=1000,force-group=1000,perms=0666:create-with-perms=0666)
-      - Used by: Lidarr and Soularr containers (real path for slskd only)
-      - Purpose: Forces writable/deletable permissions in container view despite slskd creation restrictions
-      - Status: Persistent and stable (January 29, 2026); enables true move imports and cache transience
-
-    - **Lidarr**:
-      - Installation: Docker (linuxserver/lidarr:latest, port 8686:8686)
-      - Container name: lidarr
-      - Volumes: ./lidarr/config:/config, /mnt/media/Media:/media, /cache/downloads:/downloads
-      - Environment: PUID=1000, PGID=1000, TZ=Australia/Sydney
-      - Healthcheck: CMD-SHELL curl check on localhost:8686
-      - Root Folder: /media/Music
-      - Connected Apps: Prowlarr (indexers sync), qBittorrent[](http://qbittorrent:8080), SABnzbd[](http://sabnzbd:8085)
-      - Purpose: Automated music library management (artist monitoring, quality upgrades, new releases)
-      - Status: Running (added January 2026; populating library with mainstream/metal discographies)
-
-    - **Navidrome** (Subsonic/OpenSubsonic music server):
-      - Installation: Docker (deluan/navidrome:latest, port 4533, added Jan 2026)
-      - Container name: navidrome
-      - User: 1000:1000
-      - Volumes: /mnt/media/Media/Music:/music:ro (Lidarr root), ./navidrome/data:/data (DB/cache)
-      - Environment: TZ=Australia/Sydney, ND_LOGLEVEL=info, ND_SCANNER_SCHEDULE=@every 1h, ND_SCANNER_ENABLED=true, ND_SCANNER_SCANONSTARTUP=true
-      - Purpose: Lightweight Subsonic server for Music Assistant library access and lossless streaming to Shed-Snapcast-Group
-      - Access: http://192.168.0.9:4533 (admin user, strong password set)
-      - Status: Running, hourly auto-rescan, fully integrated with Music Assistant (tested playback Jan 2026)
+    - **Lidarr** (Music management):
+      - Image: linuxserver/lidarr:latest
+      - Volumes: ./lidarr/config:/config, /mnt/media/Media:/media, /cache/downloads:/downloads, /cache/soulseek/complete:/soulseek/complete (direct source)
+      - Environment: PUID=1000, PGID=1000
+      - Status: Integrated with Soularr (direct slskd path Feb 2026)
 
   - **Utilities**:
 
