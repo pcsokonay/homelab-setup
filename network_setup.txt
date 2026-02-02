@@ -73,6 +73,7 @@
   - Core downstairs switch, IP 192.168.0.10, MAC 78:D8:00:32:3C:FA
   - Firmware: V100.9.9.1.7 (June 7 2025), hardware V3.1
   - Connections: Flint 2 uplink to RJ45 port 8; Beelink bond0 to ports 3-4 via static Trunk2; NAS bond1 to ports 1-2 via LACP Trunk1
+  - Critical note: After any power loss, static Trunk2 may lose state (ports treated independently). Recreate Trunk2 in GUI and ALWAYS click "Save Configuration" to flash. This restores balance-rr aggregation instantly.
 
 ## **TP-Link LiteWave LS105GP**:
   - 5-Port PoE Switch (ports 1-4 PoE, port 5 non-PoE), daisy-chained to keepLiNK
@@ -81,6 +82,7 @@
 ## **Realtek RTL8156 USB 2.5G Dongles (Beelink)**:
   - MACs: 00:e0:4c:68:00:5f and 00:e0:4c:68:00:99
   - Configuration: Bonded as bond0 balance-rr static aggregation
+  - Driver: Official Realtek r8152 v2.21.4 (Nov 2025) installed offline—replaces in-tree module for reliable full-duplex 2.5G negotiation (prevents half-duplex fallback after link events). Includes 50-usb-realtek-net.rules for stable interface naming.
 
 ## **Tailscale (Mesh VPN for Remote Access)**:
   - Installed on Beelink, CHOCKSMAINPC, phone, Proxmox WAN PC (including OPNsense VM) (free personal plan)
