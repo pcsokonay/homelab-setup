@@ -1,35 +1,40 @@
-Local AI Setup (OpenInterpreter + Ollama)
+Terminal AI Assistant Setup
 
 Overview:
-- Purpose: Headless terminal AI assistant on Beelink for natural-language Ubuntu Server tasks (bash scripting, Docker management, UFW, full log analysis without truncation, qBittorrent/SABnzbd tweaks).
-- Architecture: Ollama server on chocksmainpc (GTX 4090). OpenInterpreter client on Beelink (remote API).
+- Tool: llm (version 0.28 as of Dec 2025) with llm-ollama plugin for remote Ollama access.
+- Remote Ollama server: Windows PC (192.168.0.7:11434) with GTX 4090 GPU acceleration.
+- Local client: Beelink Ubuntu Server (headless).
+- Purpose: Reliable terminal CLI assistant for homelab sysadmin tasks (code/scripts + brief explanations; no agent execution/loops).
 
-Ollama Server (chocksmainpc):
-- Service with OLLAMA_HOST=0.0.0.0
-- API: http://100.108.206.83:11434/v1
-- Primary model: llama3.1:70b (128k context for full outputs) or gemma3:27b fallback
+Installation (on Beelink):
+1. sudo apt install pipx -y
+2. pipx ensurepath  # Reload shell or logout/login
+3. pipx install llm
+4. llm install llm-ollama
+5. Add to ~/.bashrc: export OLLAMA_HOST=http://192.168.0.7:11434
+   source ~/.bashrc
 
-OpenInterpreter Client (Beelink):
-- Virtualenv: ~/oi_env
-- Launcher: ~/localai_launcher.sh (executable, CLI flags)
-- Alias: localai (in ~/.bashrc)
+Custom Template (~/.config/llm/templates/homelab-sysadmin.yaml):
+system: |
+  You are an expert Linux sysadmin for a headless Ubuntu Server homelab on a Beelink mini-PC running a Docker-based media stack.
+  Prioritize reliability, efficiency, open-source solutions, and working around hardware quirks.
+  Always provide the clean, executable bash command or script first.
+  Then add a brief explanation of key parts if it helps understanding—keep it concise, no fluff.
+  Never summarize or truncate outputs; provide full raw content when needed.
+  Do not hallucinate commands or configs. Use direct, precise language.
 
-Launcher script (exact):
-#!/bin/bash
-source ~/oi_env/bin/activate
+model: gemma3:27b  # Default; override with -m qwen3:32b or others as needed
 
-SYSTEM_MESSAGE=$(cat << 'EOF'
-[Refined prompt from above]
-EOF
-)
+Aliases (add to ~/.bashrc):
+alias localai='llm -t ~/.config/llm/templates/homelab-sysadmin.yaml'
+alias localai-chat='llm chat -t ~/.config/llm/templates/homelab-sysadmin.yaml'
 
-interpreter --model llama3.1:70b --api_base http://100.108.206.83:11434/v1 --context_window 128000 --max_tokens 8192 --api_key "" --system_message "$SYSTEM_MESSAGE"
+Usage:
+- Single query: localai "natural language request"
+- Interactive multi-turn: localai-chat (great for script → cron follow-ups)
+- Override model: localai -m qwen3:32b "request"
 
 Notes:
-- No API key needed (empty suppresses messages).
-- Large context eliminates truncation.
-- Confirmation enabled (add -y for auto-run trusted commands).
-- LiteLLM/Pydantic warnings harmless.
-- Custom prompt enforces raw full outputs + conciseness.
-
-Status: Fully working (January 2026)
+- Full raw output streaming; no auto-execution (manual copy-paste for safety/review).
+- GPU offload confirmed via VRAM usage on Windows Ollama.
+- Short alias reuses old "localai" name for easy typing.
