@@ -1,7 +1,8 @@
-## Clients
+# clients.txt - Updated for Sendspin migration (three Pi clients complete, one fallback, Windows planned)
+
 - Pixel 7 Pro (Android 10, dynamic)
 - Chromecast (Google Cast, dynamic—deprecated for main room multi-room)
-- chocksmainpc: 192.168.0.7 (dynamic with Dnsmasq reservation, Windows with WSL Ubuntu, Tailnet IP 100.108.206.83, Snapclient for multi-room audio—main room 5.1 via Voicemeeter AUX)
+- chocksmainpc: 192.168.0.7 (dynamic with Dnsmasq reservation, Windows with WSL Ubuntu, Tailnet IP 100.108.206.83, planned Sendspin client via windowsSpin for multi-room audio—main room 5.1 via Voicemeeter AUX)
 - Csokonay: Dad's PC (192.168.30.3 reserved on NF18Mesh)
 - Beelink N150: 192.168.0.9 (static, Docker host)
 - TrueNAS Scale NAS: 192.168.0.8 (static with Dnsmasq reservation)
@@ -12,7 +13,7 @@
   - GCP VM: 35.189.61.183 (australia-southeast1, e2-medium, netserver port 12865 for bufferbloat)
   - Oracle Cloud VM: 152.67.127.81 (Sydney, VM.Standard.E2.1.Micro, Ubuntu, netserver port 12865 for bufferbloat)
 - external-tester: Alpine Linux VM on Proxmox WAN PC (upstairs behind NF18, DHCP from 192.168.30.x range; used for external Jellyfin/access testing—no IPv6)  
-- snapclient1: Raspberry Pi Zero 2 W audio endpoint (room 1, username chocks, I2S DAC configured, local audio verified)
-- snapclient2: Raspberry Pi Zero 2 W audio endpoint (room 2, username chocks, I2S DAC configured, local audio verified)
-- snapclient3: Raspberry Pi Zero 2 W audio endpoint (room 3, username chocks, I2S DAC configured, local audio verified)
-- snapclient4: Raspberry Pi Zero 2 W audio endpoint (room 4, username chocks, I2S DAC configured, local audio verified)
+- spinclient1 (formerly snapclient1): Raspberry Pi Zero 2 W audio endpoint (room 1, username chocks, I2S DAC configured, Sendspin client)
+- spinclient2 (formerly snapclient2): Raspberry Pi Zero 2 W audio endpoint (room 2, username chocks, I2S DAC configured, Sendspin client)
+- spinclient3 (formerly snapclient3): Raspberry Pi Zero 2 W audio endpoint (room 3, username chocks, I2S DAC configured, Sendspin client)
+- snapclient4: Raspberry Pi Zero 2 W audio endpoint (room 4, username chocks, I2S DAC configured, Snapcast client – fallback)
