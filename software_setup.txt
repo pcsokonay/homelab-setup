@@ -25,12 +25,6 @@
     - 0 * * * * find /cache/downloads/complete -type d -name '_FAILED_*' -empty -exec rm -rf {} \;
     - 0 3 * * * /home/chocks/truncate-nas-log.sh 
 
-  - **Snapcast Clients** (on spinclient1–3):
-    - Replaced with sendspin-cli (February 2026)
-    - Installation: Official systemd script on each Raspberry Pi Zero 2 W
-    - Config: /home/sendspin/.config/sendspin/settings-daemon.json + systemd override for manual server URL
-    - Status: Enabled and running on three clients; superior sync vs Snapcast
-
   - **Nextcloud**:
     - Installation: Docker (custom local/nextcloud:stable-apache with SMB support, merged into main stack on 02/JAN/2026, rebuilt 03/JAN/2026)
     - Volumes: Named volumes nextcloud_data:/var/www/html, db_data:/var/lib/mysql (local persistence on Beelink SSD); custom ./nextcloud-custom/opcache.ini mounted for PHP tuning

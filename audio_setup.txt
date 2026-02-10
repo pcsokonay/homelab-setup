@@ -113,14 +113,11 @@ Configurations (per client):
   - Installed via official systemd script (sendspin-cli)  
   - Daemon config: /home/sendspin/.config/sendspin/settings-daemon.json (name, static_delay_ms ~350ms tested per room, audio_device index confirmed via sendspin --list-audio-devices, use_mpris false)  
   - Manual server connection: systemd override forces ExecStart with --url ws://192.168.0.2:8927/sendspin (bypasses unreliable mDNS)  
-- snapclient4: Legacy Snapcast client (fallback, untouched)  
 
 Server (Home Assistant VM at 192.168.0.2):  
 - Music Assistant add-on (latest stable) with native Sendspin provider  
-- Group: Create new Sendspin group in Music Assistant (includes spinclient1–3; add spinclient4 once migrated)  
+- Group: Create new Sendspin group in Music Assistant (includes spinclient1–3)  
 - Per-client delay/volume adjustable in Music Assistant player settings  
-
-Previous setup (deprecated): Snapcast (snapserver on Beelink 192.168.0.9, shairport-sync bridge) – decommissioned on three clients for tighter sync, lower latency, and simpler native integration  
 
 Music Source: Navidrome (Subsonic API) integrated into Music Assistant as primary local library provider  
 - Base URL: http://192.168.0.9:4533  
