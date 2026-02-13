@@ -4,6 +4,7 @@
 - **OpenInterpreter**: Abandoned due to truncation, loops, hallucinations, and confirmation spam.
 - **llm**: Reliable for pure generation with templates, but no tools/agent execution.
 - **aichat/llm-functions**: Abandoned due to slow performance, context overflows/crashes, incomplete chaining/forgetting, tool errors/frustrations, and overall overkill for simple tasks (see summary below for details).
+- **term_agent** - so very close to being usable that it was sad to give up on it. I havent actually removed it because I really like the idea, its just short of being useful.
 
 ## Current
 - **Primary**: None - Switched to GitHub Copilot CLI for all sysadmin tasks.

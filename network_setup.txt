@@ -104,7 +104,7 @@
     - nic3: Spare (roadmap cable testing)
 
 ## **Virtual Machines**:
-  - OPNsense: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, version 25.7.10
+  - OPNsense: VMID 100, 4 cores, 8GB RAM, 50GB SCSI disk, version 26.1.2
     - Web GUI: Custom TCP port 8443 (HTTPS; Listen Interfaces All)
     - Machine Type: q35
     - Networks: VirtIO (vtnet0 WAN, vtnet1 LAN, vtnet2 OPT1, OPT2 TAIL locked)
@@ -127,45 +127,55 @@
   - jellyfin.csokonay.online → 180.150.66.156 (A)
   - sonarr.csokonay.online → 180.150.66.156 (A)
   - prowlarr.csokonay.online → 180.150.66.156 (A)
-  - radarr.csokonay.online → 180.150.66.156 (A; cert valid via Let's Encrypt until ~Feb 2026)
-  - media.csokonay.online → 180.150.66.156 (A, Caddy testing)
+  - radarr.csokonay.online → 180.150.66.156 (A)
+  - media.csokonay.online → 180.150.66.156 (A)
+  - ma.csokonay.online → 180.150.66.156 (A)
   - shoddy88.duckdns.org (static response)
 
-## **Firewall (Beelink UFW)**:
+## **Firewall (Beelink UFW)** (updated 2026-02-12):
 - Status: Active
 - Default policy: Deny incoming, allow outgoing
 - Rules (IPv4):
-  80/tcp ALLOW IN Anywhere # Caddy external HTTP
-  443/tcp ALLOW IN Anywhere # Caddy external HTTPS
-  5000/tcp ALLOW IN 192.168.0.0/24 # Shairport-sync control
-  6000:6009/udp ALLOW IN 192.168.0.0/24 # Shairport-sync timing
-  1704:1705/tcp ALLOW IN 192.168.0.0/24 # Snapserver audio streams + control
-  5010/tcp ALLOW IN 192.168.0.2 # Legacy Snapserver TCP stream
-  4953:5153/tcp ALLOW IN 192.168.0.2 # Dynamic Snapcast from HA
-  8686/tcp ALLOW IN 192.168.0.0/24 # Lidarr web UI
-  22/tcp ALLOW IN 192.168.0.0/24 # SSH from LAN only
-  8096/tcp ALLOW IN Anywhere # Jellyfin direct access
-  7878/tcp ALLOW IN 192.168.0.0/24 # Radarr web UI
-  8989/tcp ALLOW IN 192.168.0.0/24 # Sonarr web UI
-  9696/tcp ALLOW IN 192.168.0.0/24 # Prowlarr web UI
-  8080/tcp ALLOW IN 192.168.0.0/24 # qBittorrent web UI
-  8085/tcp ALLOW IN 192.168.0.0/24 # SABnzbd web UI
-  8265/tcp ALLOW IN 192.168.0.0/24 # Tdarr web UI
-  8266/tcp ALLOW IN 192.168.0.0/24 # Tdarr server
-  5004/tcp ALLOW IN 192.168.0.0/24 # Tdarr Inform API/UI
-  1704/tcp ALLOW IN 192.168.0.0/24 # Snapserver audio streams
-  Samba ALLOW IN 192.168.0.0/24 # SMB shares on Beelink
-  5201/tcp ALLOW IN 192.168.0.0/24 # iperf testing
-  7879/tcp ALLOW IN 192.168.0.0/24 # Radarr4K web UI
-  7878,7879,8080,8085,8989,9696/tcp ALLOW IN 172.16.0.0/12 # Docker containers → host web UIs for healthchecks/stack-monitor
-  5004/tcp ALLOW IN 172.16.0.0/12 # Tdarr Inform API/UI – Docker containers to host
-  6881/tcp ALLOW IN Anywhere # qBittorrent incoming peers TCP
-  6881/udp ALLOW IN Anywhere # qBittorrent incoming peers UDP
+  — External (Anywhere):
+  80/tcp # Caddy external HTTP
+  443/tcp # Caddy external HTTPS
+  8096/tcp # Jellyfin direct access
+  6881/tcp # qBittorrent incoming peers TCP
+  6881/udp # qBittorrent incoming peers UDP
+  — LAN-restricted (192.168.0.0/24):
+  22/tcp # SSH from LAN only
+  Samba # SMB shares on Beelink
+  5004/tcp # Tdarr Inform API/UI
+  5030 # slskd web UI
+  5030/tcp # slskd (duplicate, specific protocol)
+  5031/tcp # slskd HTTPS server
+  5201 # iperf testing
+  7575 # Homarr UI
+  7878/tcp # Radarr web UI
+  7879/tcp # Radarr4K web UI
+  8080/tcp # qBittorrent web UI
+  8085/tcp # SABnzbd web UI
+  8265/tcp # Tdarr web UI (Homarr needs it for Tdarr info)
+  8266/tcp # Tdarr server
+  8686/tcp # Lidarr web UI
+  8989/tcp # Sonarr web UI
+  9696/tcp # Prowlarr web UI
+  4533 # Navidrome
+  3000 # Aurral UI
+  3001/tcp # Dashdot
+  — Docker bridge (172.16.0.0/12):
+  7878,7879,8080,8085,8989,9696/tcp # Docker containers → host web UIs for healthchecks/stack-monitor
+  5004/tcp # Tdarr Inform API/UI – Docker containers to host
+  5030 # slskd Docker bridge
+  5031 # slskd HTTPS Docker bridge
+  8265:8266/tcp # Tdarr inter-docker comms
+  8686 # Lidarr Docker bridge
 - Rules (IPv6):
   Public (Anywhere (v6)): 80/tcp, 443/tcp, 8096/tcp # Caddy external HTTP/HTTPS + Jellyfin direct
   6881/tcp, 6881/udp # qBittorrent incoming peers TCP/UDP
-  LAN-restricted (2403:5807:8d14:11::/64): 22/tcp (SSH), 8686/tcp (Lidarr), 7878/tcp (Radarr), 7879/tcp (Radarr4K), Samba (SMB), 8989/tcp (Sonarr), 9696/tcp (Prowlarr), 8080/tcp (qBittorrent), 8085/tcp (SABnzbd), 8265/tcp (Tdarr), 5004/tcp (Tdarr Inform), 1704:1705/tcp (Snapserver), 5000/tcp (Shairport-sync), 6000:6009/udp (Shairport-sync timing), 1780/tcp (Snapweb)
+  LAN-restricted (2403:5807:8d14:11::/64): 22/tcp (SSH), 8686/tcp (Lidarr), 7878/tcp (Radarr), 7879/tcp (Radarr4K), Samba (SMB), 8989/tcp (Sonarr), 9696/tcp (Prowlarr), 8080/tcp (qBittorrent), 8085/tcp (SABnzbd), 8265/tcp (Tdarr), 5004/tcp (Tdarr Inform)
 - Notes:
   - External access primarily via Caddy on 443 (dual-stack).
   - qBittorrent peers: Port 6881 TCP+UDP; IPv6 direct inbound after OPNsense WAN rule (IPv4 blocked by design).
-  - Docker: Broad private range covers all possible container networks for reliable healthchecks.
+  - Docker: Broad 172.16.0.0/12 range covers all possible container networks for reliable healthchecks.
+  - Shairport-sync/Snapserver/Snapcast rules removed (audio moved to Sendspin on Pis).

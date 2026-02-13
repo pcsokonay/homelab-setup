@@ -123,14 +123,15 @@
       - Sync: With Sonarr/Radarr (level 2, auto tag enabled)
     
     - **Aurral** (Music discovery/request interface for Lidarr):
-      - Installation: Docker Compose (separate stack in ~/docker-homelab/aurral, cloned from https://github.com/lklynet/aurral v0.10.0, Jan 2026)
-      - docker-compose.yml: Source build (frontend:80 → host 3000; backend:3001 internal only, no host port exposed)
-      - Volumes: ./backend/data:/app/data (persistent)
-      - Environment: Via .env file (LIDARR_URL=http://192.168.0.9:8686, LIDARR_API_KEY=[redacted], CONTACT_EMAIL=[user email], LASTFM_API_KEY=[redacted for better artist images], optional AUTH_PASSWORD=[strong password])
-      - Network: Default bridge (backend reachable via service name)
-      - Access: http://192.168.0.9:3000 (LAN-only, basic auth recommended)
+      - Installation: Docker Compose (separate stack in ~/docker-homelab/aurral, cloned from https://github.com/lklynet/aurral test branch, Feb 2026)
+      - docker-compose.yml: Single container (ghcr.io/lklynet/aurral:test), ports 3000:3001
+      - Volumes: ./data:/app/backend/data (persistent, fresh SQLite DB for test branch), /cache/aurral:/app/downloads (for Weekly Flow outputs)
+      - Environment: TZ=Australia/Sydney, PUID=1000, PGID=1000
+      - User: "1000:1000"
+      - Network: Default bridge
+      - Access: http://192.168.0.9:3000 (LAN-only, user accounts for auth)
       - Firewall: UFW allow from 192.168.0.0/24 to port 3000
-      - Status: Fully working (Jan 29, 2026)—library sync, MusicBrainz search, recommendations, one-click monitor/add to Lidarr
+      - Status: Fully working (Feb 11, 2026)—library sync, MusicBrainz search, recommendations, one-click monitor/add to Lidarr; UI-based config for Lidarr/LastFM/etc.; Navidrome playlist feature enabled; remote folder set up
 
   - **Downloaders**:
     - **SABnzbd**:
